@@ -2,7 +2,7 @@ class MinValue
   include Mongoid::Document
 
   # Associations
-  embedded_in :tender, class_name: "Tender", inverse_of: :minValue
+  embedded_in :award, class_name: "Award", inverse_of: :minValue
 
   # Fields
   field :amount, type: Float

@@ -11,7 +11,7 @@ gem 'figaro'
 gem 'mina'
 gem 'chewy'
 gem 'smarter_csv', '~>1.1.0'
-gem "mongoid", "~> 4.0.0"
+gem "mongoid", "~> 5.0.0"
 # gem 'parallel'
 gem 'sidekiq'
 
