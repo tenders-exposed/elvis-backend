@@ -3,7 +3,7 @@ class Supplier
 
   # Associations
   belongs_to :document
-  has_one :address, as: :addressable, dependent: :destroy
+  has_one :address, as: :addressable, dependent: :destroy, autosave: true
 
   # Fields
   field :name, type: String

@@ -4,7 +4,7 @@ class Document
   # Associations
   has_many :tenders, dependent: :destroy
   has_many :awards, dependent: :destroy
-  has_one  :procuring_entity, dependent: :destroy
+  has_one  :procuring_entity, dependent: :destroy, autosave: true
   has_many :suppliers, dependent: :destroy
 
   # Fields
