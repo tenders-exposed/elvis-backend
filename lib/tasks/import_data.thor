@@ -1,6 +1,6 @@
 class ImportData < Thor
   require 'smarter_csv'
-  require_relative '../float_converter'
+  require 'active_support/core_ext/object/try'
 
   require File.expand_path('config/environment.rb')
 
@@ -10,8 +10,9 @@ class ImportData < Thor
     SmarterCSV.process(filename, opts) do |chunk|
       initialize_arrays
       chunk.each do |row|
+        row.each{ |key,val| row[key] = val.is_a?(String) ? val.try(:erase_html) : val }
         doc =  Document.new(
-                document_id: row[:document_doc_no],
+                document_id: row[:document_doc_no].try(:erase_html),
                 additionalIdentifiers: row[:contract_file_reference],
                 awardCriteria: row[:document_award_criteria_code],
                 procurementMethod: row[:document_procedure_code],
@@ -104,10 +105,11 @@ class ImportData < Thor
 
   desc "import_ted_csv FILE", "Import data from the TED csvs"
   def import_2011_csv(filename)
-    opts= { :chunk_size => 50}
+    opts= { :chunk_size => 50, :row_sep => "\n"}
     SmarterCSV.process(filename, opts) do |chunk|
       initialize_arrays
       chunk.each do |row|
+        row.values.map!{|val| val.is_a?(String) ? val.try(:erase_html) : val }
         doc = Document.new(
                 document_id: row[:doc_number],
                 additionalIdentifiers: row[:contract_number],

@@ -9,15 +9,15 @@ gem 'ffaker'
 gem 'devise', '~>3.4.1'
 gem 'figaro'
 gem 'mina'
-gem 'chewy'
+# gem 'chewy'
 gem 'smarter_csv', '~>1.1.0'
 gem "mongoid", "~> 5.0.0"
-# gem 'parallel'
+gem "mongoid-elasticsearch", "~>0.9.0"
 gem 'sidekiq'
+gem 'whatlanguage'
+gem "cld"
 
 group :development do
   gem 'byebug'
-  gem 'sqlite3'
   gem 'pry-rails'
-  gem 'railroady'
 end
