@@ -186,7 +186,6 @@ GEM
       thread_safe (~> 0.1)
     warden (1.2.3)
       rack (>= 1.0)
-    whatlanguage (1.0.5)
 
 PLATFORMS
   ruby
@@ -208,7 +207,6 @@ DEPENDENCIES
   sidekiq
   smarter_csv (~> 1.1.0)
   spring
-  whatlanguage
 
 BUNDLED WITH
    1.10.6

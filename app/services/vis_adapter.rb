@@ -1,0 +1,4 @@
+class VisAdapter
+  
+
+end

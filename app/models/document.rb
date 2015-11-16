@@ -1,5 +1,6 @@
 class Document
   include Mongoid::Document
+  include Mongoid::Elasticsearch
 
   # Associations
   has_many :tenders, dependent: :destroy
@@ -18,10 +19,17 @@ class Document
   field :x_framework, type: String
   field :x_subcontracted, type: Boolean
   field :numberOfTenderers, type: String
-  field :x_lot
+  field :x_lot, type: String
   field :x_additionalInformation, type: String
   field :x_url, type: String
 
 
   accepts_nested_attributes_for :awards, :procuring_entity
+
+  elasticsearch!({
+    prefix_name: false,
+    index_name: 'documents',
+    wrapper: :load
+  })
+
 end

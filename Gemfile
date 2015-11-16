@@ -14,7 +14,6 @@ gem 'smarter_csv', '~>1.1.0'
 gem "mongoid", "~> 5.0.0"
 gem "mongoid-elasticsearch", "~>0.9.0"
 gem 'sidekiq'
-gem 'whatlanguage'
 gem "cld"
 
 group :development do
