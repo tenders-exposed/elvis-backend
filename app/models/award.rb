@@ -26,18 +26,4 @@ class Award
     wrapper: :load
   })
 
-  def as_indexed_json
-    {
-      country: document.procuring_entity.address.countryName,
-      cpvs: document.x_CPV,
-      award_id: award_id,
-      title: title,
-      description: description,
-      initialValue: initialValue,
-      minValue: minValue,
-      value: value,
-      x_initialValue: value,
-      date: date
-    }
-  end
 end

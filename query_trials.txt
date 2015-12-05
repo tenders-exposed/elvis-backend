@@ -1,0 +1,185 @@
+        Document.es.search({
+          "body":{
+            "query": {
+              "bool": {
+                 "must": [
+                    { "terms": { "x_CPV":  ["65310000"], execution: "bool", _cache: true}},
+                    {
+                     "nested": {
+                        "path": "awards",
+                        "query": {
+                          "bool": {
+                            "must": [
+                              { "terms": { "awards.year":  ["2010", "2011"], execution: "bool", _cache: true}}
+                            ]
+                          }
+                        }
+                      }
+                    }
+                 ]
+              }
+            }
+          }
+        })
+
+                            "bool": {
+                              "should": [
+                                { "match": { "procuring_entity.country": "PL" } },
+                                { "match": { "procuring_entity.country": "ES" } }
+                              ],
+                              "minimum_should_match": 1,
+                            }
+
+        Document.es.search({
+          "body":{
+           "query": {
+             "nested": {
+               "path": "awards",
+               "query": {
+                 "bool": {
+                   "must": [
+                     { "match": { "awards.year":  2010}}
+                   ]
+                 }
+               }
+             }
+         }}})
+
+             "nested":{
+               "path": "procuring_entity",
+               "query": {
+                 "bool": {
+                   "must": [
+                     { "terms": { "procuring_entity.country": ["ES", "PL"]}}
+                   ]
+                 }
+               }
+             }
+           }
+
+           ,
+           {
+             "nested": {
+                "path": "procuring_entity",
+                "query": {
+                  "bool": {
+                    "must": [
+                      { "terms": { "procuring_entity.country": ["ES", "PL"]}}
+                    ]
+                   }
+                }
+             }
+           }
+
+
+Good
+    Document.es.search({
+       "search_type": "count",
+       "body":{
+       "aggregations": {
+           "entities":{
+             "nested": {
+               "path": "procuring_entity"
+             },
+             "aggs": {
+               "procuring_entity_names": {
+                 "terms": {
+                   "field": "procuring_entity.x_slug",
+                   "size": 0
+                 }
+
+               }
+             }
+           }
+         }
+      }})
+
+
+      "aggs": {
+        "suppliers": {
+          "nested": {
+            "path": "suppliers"
+          },
+          "aggs": {
+            "suppliers_names": {
+              "terms":{
+                "field": "suppliers.x_slug",
+                "size": 0
+              }
+            }
+          }
+        }
+      }
+
+      Document.es.search({
+        "body":{
+         "aggregations": {
+             "entities":{
+               "nested": {
+                 "path": "procuring_entity"
+               },
+               "aggs": {
+                 "procuring_entity_names": {
+                   "terms": {
+                     "field": "procuring_entity.x_slug",
+                     "size": 0
+                   }
+                 },
+               },
+               "aggs": {
+                 "suppliers": {
+                   "nested": {
+                     "path": "suppliers"
+                   },
+                   "aggs": {
+                     "suppliers_name": {
+                       "terms":{
+                         "field": "suppliers.x_slug",
+                       }
+                     }
+                   }
+                 }
+                }
+             }
+           }
+           }})
+
+
+          "aggs": {
+              "suppliers": {
+                  "terms": { "field": "suppliers.x_slug" }
+              }
+
+          }
+
+curl -XGET 'http://localhost:9200/documents/_search?pretty' -d '{
+"aggregations" : {
+    "entities" :{
+      "nested" : {
+        "path" : "procuring_entity"
+      },
+      "aggs" : {
+        "procuring_entity_names" : {
+          "terms" : {
+            "field" : "procuring_entity.x_slug"
+          },
+          "aggs" : {
+            "suppliers" : {
+              "nested" : {
+                "path" : "suppliers"
+              },
+              "aggs" : {
+                "suppliers_names" : {
+                  "terms" :{
+                    "field" : "suppliers.x_slug",
+                    "size" : 0
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}'

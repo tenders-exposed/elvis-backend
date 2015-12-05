@@ -1,51 +1,83 @@
 class QueryDocuments
-  attr_accessor :query, :results, :count, :filters
+  attr_accessor :query, :filters, :result
+
+  FIELDS = {  'cpvs' => 'x_CPV',
+              'years' => 'awards.year',
+              'countries' => 'procuring_entity.country',
+              'entities' => 'procuring_entity.x_slug',
+              'suppliers' => 'suppliers.x_slug'
+            }.freeze
 
   def initialize
     @filters = []
-    @query = { body: {
-                query: {
-                  filtered: {
-                    query: { match_all: {} },
-                    filter: {
-                      bool: {  must: @filters }
+    @query =  { body:{
+                  query: {
+                    bool: {
+                      must: @filters
                     }
                   }
                 }
               }
-            }
-  end
 
+  end
 
   def search *options
     build_query *options
-    @results = Award.es.search(@query).results
-
+    Document.es.search(@query).results
+  rescue => e
+    return e
   end
 
   def count *options
     build_query *options
-    @count = Award.es.search(@query).total
+    Document.es.search(@query).total
+  rescue => e
+    return e
+  end
+
+  def graph *options
+    opts = options.extract_options!
+    calc_options= opts.extract!(:nodes, :edges)
+    query_options = [opts]
+    build_query *query_options
+    VisJsonConstructor.new(@query, calc_options).aggregate_counts
   end
 
   def build_query *options
     params = options.extract_options!.stringify_keys!
-    params.each { |k,v| @filters << create_filter(k,v) if create_filter(k,v)}
+    params.each do |field, value|
+      if !(FIELDS.include?(field))
+        raise SearchError.new(field), " \"#{field}\" is not a supported query criteria"
+      end
+      @filters << create_filter(FIELDS[field], value)
+    end
   end
 
-  def create_filter param, value
-    hash ={ terms: {"execution": "bool", "_cache": true} }
-    case param
-    when 'cpvs'
-      hash[:terms]['cpvs'] = value
-    when 'years'
-      hash[:terms]['date.x_year'] = value
-    when 'countries'
-      hash[:terms]['country'] = value
-    else
-      return nil
+  def create_filter field, value
+    analized_field = field.split('.')
+    condition = { terms: {field =>  value, execution: "bool", _cache: true} }
+    if analized_field.size == 1
+      return condition
     end
-    hash
+    subject = analized_field.first
+    filter =  { nested: {
+                  path: subject,
+                  query: {
+                    bool: {
+                      must: [ condition ]
+                    }
+                  }
+                }
+              }
+  end
+
+end
+
+class SearchError < StandardError
+  attr_reader :object
+
+  def initialize(object)
+    @object = object
   end
 
 end

@@ -6,7 +6,6 @@ class AwardsController < ApplicationController
     render json: awards.results, serializer: AwardSerializer
   end
 
-
   def award_params
     params.require(:award).permit(:country, :cpv, :year)
   end
