@@ -2,7 +2,7 @@ class Address
   include Mongoid::Document
 
   # Associations
-  belongs_to :addressable, polymorphic: true
+  embedded_in :addressable, polymorphic: true
 
   # Fields
   field :countryName, type: String

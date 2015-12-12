@@ -3,10 +3,10 @@ class Document
   include Mongoid::Elasticsearch
 
   # Associations
-  has_many :tenders, dependent: :destroy
-  has_many :awards, dependent: :destroy
-  has_one  :procuring_entity, dependent: :destroy, autosave: true
-  has_many :suppliers, dependent: :destroy
+  embeds_many :tenders, inverse_of: :document
+  embeds_many :awards, inverse_of: :document
+  embeds_one  :procuring_entity, inverse_of: :document
+  embeds_many :suppliers, inverse_of: :document
 
   # Fields
   field :document_id, type: String
@@ -22,6 +22,7 @@ class Document
   field :x_lot, type: String
   field :x_additionalInformation, type: String
   field :x_url, type: String
+  field :contract_number, type: String
 
   # Mappings
   elasticsearch!({
@@ -34,22 +35,22 @@ class Document
             procuring_entity: {
               type: 'nested',
               properties: {
-                country: {
-                  type: 'string',
-                  index: 'not_analyzed'
+                address: {
+                  type: 'nested',
+                  properties: {
+                    countryName: {
+                      type: 'string',
+                      index: 'not_analyzed'
+                    }
+                  }
                 },
                 x_slug: {
                   type: 'string',
                   index: 'not_analyzed'
-                }
-              }
-            },
-            awards: {
-              type: 'nested',
-              properties:{
-                year: {
-                  type: 'string',
-                  index: 'not_analyzed'
+                },
+                contractPoint: {
+                  type: 'nested',
+                  properties: {type: 'string'}
                 }
               }
             },
@@ -61,6 +62,69 @@ class Document
                   index: 'not_analyzed'
                 }
               }
+            },
+            tenders: {
+              type: 'nested',
+              properties: {
+                value: {
+                  type: 'nested',
+                  properties: {
+                    amount: {type: 'float'},
+                    x_amountEur: {type: 'float'},
+                    currency: {type: 'string'},
+                    x_vat: {type: 'float'},
+                    x_vatbool: {type: 'bool'}
+                  }
+                }
+              }
+            },
+            awards: {
+              type: 'nested',
+              properties:{
+                date: {
+                  type: 'nested',
+                  properties: {
+                    x_year: {
+                      type: 'integer',
+                      index: 'not_analyzed'
+                    },
+                    x_month: {type: 'integer'},
+                    x_day: {type: 'integer'}
+                  }
+                },
+                initialValue: {
+                  type: 'nested',
+                  properties: {
+                    amount: {type: 'float'},
+                    currency: {type: 'string'},
+                    x_vat: {type: 'float'}
+                  }
+                },
+                minValue: {
+                  type: 'nested',
+                  properties: {
+                    amount: {type: 'float'},
+                    x_amountEur: {type: 'float'}
+                  }
+                },
+                value: {
+                  type: 'nested',
+                  properties: {
+                    amount: {type: 'float'},
+                    x_amountEur: {type: 'float'},
+                    currency: {type: 'string'},
+                    x_vat: {type: 'float'},
+                    x_vatbool: {type: 'bool'}
+                  }
+                },
+                x_initialValue: {
+                  type: 'nested',
+                  properties: {
+                    x_amountEur: {type: 'float'},
+                    x_vatbool: {type: 'bool'}
+                  }
+                }
+              }
             }
           }
         }
@@ -68,47 +132,5 @@ class Document
     },
     wrapper: :load
   })
-
-  # Indexed Data
-  def as_indexed_json
-    {
-      document_id: document_id,
-      additionalIdentifiers: additionalIdentifiers,
-      awardCriteria: awardCriteria,
-      procurementMethod: procurementMethod,
-      x_CPV: x_CPV,
-      x_NUTS: x_NUTS,
-      x_euProject: x_euProject,
-      x_framework: x_framework,
-      x_subcontracted: x_subcontracted,
-      numberOfTenderers: numberOfTenderers,
-      x_lot: x_lot,
-      x_additionalInformation: x_additionalInformation,
-      x_url: x_url,
-      suppliers: suppliers,
-      procuring_entity: {
-        _id: procuring_entity.id,
-        country: index_country_name,
-        x_slug: procuring_entity.x_slug,
-        name: procuring_entity.name
-      },
-      awards: index_awards
-    }
-  end
-
-  def index_country_name
-    procuring_entity.address ? procuring_entity.address.countryName : nil
-  end
-
-  def index_awards
-    mapped_awards = Array.new()
-    mapped_awards << awards.to_a.inject({}) do |result, award|
-      result["_id"]= award.id
-      result["year"] = award.date.x_year
-      result["value"] = award.value.x_amountEur
-      result
-    end
-    mapped_awards
-  end
 
 end

@@ -20,11 +20,13 @@ class ImportData < Thor
                 x_euProject: row[:contract_relates_to_eu_project],
                 x_NUTS: row[:contract_location_nuts],
                 x_url: row[:document_doc_url],
+                x_lot: row[:contract_lot_number],
                 numberOfTenderers: row[:contract_offers_received_num],
+                contract_number: row[:contract_contract_number],
                 x_additionalInformation: row[:contract_additional_information]
         )
         @documents << doc
-        @awards << Award.new(
+        @awards << doc.awards.build(
                       date: {
                         x_year:  row[:contract_contract_award_year],
                         x_month: row[:contract_contract_award_month],
@@ -50,53 +52,45 @@ class ImportData < Thor
                         x_amountEur: row[:contract_contract_value_low_eur].to_f
                       },
                       title: row[:contract_contract_award_title],
-                      description: row[:contract_contract_description],
-                      document_id: doc.id
+                      description: row[:contract_contract_description]
                   )
-        entity =  ProcuringEntity.new(
+        entity =  doc.build_procuring_entity(
                     name: row[:contract_authority_official_name],
                     x_slug: row[:contract_authority_slug],
-                    contractPoint: {name: row[:contract_authority_attention]},
-                    document_id: doc.id
+                    contractPoint: {name: row[:contract_authority_attention]}
                   )
         @entities << entity
-        @addresses << Address.new(
+        @addresses << entity.build_address(
                         countryName: row[:contract_authority_country],
                         locality: row[:contract_authority_town],
                         streetAddress: row[:contract_authority_address],
                         postalCode: row[:contract_authority_postal_code],
                         email: row[:contract_authority_email],
                         telephone: row[:contract_authority_phone],
-                        x_url: row[:contract_authority_url],
-                        addressable_type: entity.class.to_s,
-                        addressable_id: entity.id
+                        x_url: row[:contract_authority_url]
                       )
-        @tenders << Tender.new(
+        @tenders << doc.tenders.build(
                       value: {
                         amount: row[:contract_total_value_cost].to_f,
                         x_amountEur: row[:contract_total_value_cost_eur].to_f,
                         x_vatbool: row[:contract_total_value_vat_included],
                         currency: row[:contract_total_value_currency],
                         x_vat: row[:contract_total_value_vat_rate].to_f
-                      },
-                      document_id: doc.id
+                      }
                     )
-        supplier =  Supplier.new(
+        supplier =  doc.suppliers.build(
                       name: row[:contract_operator_official_name],
-                      x_slug: row[:contract_operator_slug],
-                      document_id: doc.id
+                      x_slug: row[:contract_operator_slug]
                     )
         @suppliers << supplier
-        @addresses << Address.new(
+        @addresses << supplier.build_address(
                         countryName: row[:contract_operator_country_code],
                         locality: row[:contract_operator_town],
                         streetAddress: row[:contract_operator_address],
                         postalCode: row[:contract_operator_postal_code],
                         email: row[:contract_operator_email],
                         telephone: row[:contract_operator_phone],
-                        x_url: row[:contract_operator_url],
-                        addressable_type: supplier.class.to_s,
-                        addressable_id: supplier.id
+                        x_url: row[:contract_operator_url]
                       )
       end
       batch_insert
@@ -115,6 +109,7 @@ class ImportData < Thor
                 additionalIdentifiers: row[:contract_number],
                 awardCriteria: row[:award_criteria_type],
                 procurementMethod: row[:proc_type],
+                contract_number: row[:contract_number],
                 x_CPV: row[:cpv].to_s.split(';'),
                 x_euProject: row[:eu_project],
                 x_framework: row[:framework],
@@ -125,7 +120,7 @@ class ImportData < Thor
                 x_additionalInformation: row[:additional_info]
               )
         @documents << doc
-        @awards <<  Award.new(
+        @awards <<  doc.awards.build(
                       date: {
                         x_year:  row[:contract_award_year],
                         x_month: row[:contract_award_month],
@@ -149,49 +144,41 @@ class ImportData < Thor
                       },
                       title: row[:title_contract],
                       description: row[:short_contract_description],
-                      award_id: row[:contract_id],
-                      document_id: doc.id
+                      award_id: row[:contract_id]
                     )
-        entity =  ProcuringEntity.new(
+        entity =  doc.build_procuring_entity(
                     name: row[:authority_name],
                     x_slug: row[:authority_name_slug],
                     x_type: row[:auth_type],
-                    contractPoint: {name: row[:authority_contact_person]},
-                    document_id: doc.id
+                    contractPoint: {name: row[:authority_contact_person]}
                   )
         @entities << entity
-        @addresses << Address.new(
+        @addresses << entity.build_address(
                         countryName: row[:authority_country],
                         locality: row[:authority_town],
                         streetAddress: row[:authority_address],
                         postalCode: row[:authority_postal_code],
-                        x_url: row[:authority_www],
-                        addressable_type: entity.class.to_s,
-                        addressable_id: entity.id
+                        x_url: row[:authority_www]
                       )
-        @tenders << Tender.new(
+        @tenders << doc.tenders.build(
                       value: {
                         amount: row[:tender_value].to_f,
                         currency: row[:tender_currency],
                         x_amountEur: row[:tender_value_eur],
                         x_vatbool: row[:tender_value_vat],
                         x_vat: row[:tender_value_vat_percent].to_f
-                      },
-                      document_id: doc.id
+                      }
                     )
-        supplier =  Supplier.new(
+        supplier =  doc.suppliers.build(
                       name: row[:company_name],
-                      x_slug: row[:company_name_slug],
-                      document_id: doc.id
+                      x_slug: row[:company_name_slug]
                     )
         @suppliers << supplier
-        @addresses << Address.new(
+        @addresses << supplier.build_address(
                         countryName: row[:company_country],
                         locality: row[:company_town],
                         streetAddress: row[:company_address],
-                        postalCode: row[:company_postal_code],
-                        addressable_type: supplier.class.to_s,
-                        addressable_id: supplier.id
+                        postalCode: row[:company_postal_code]
                       )
       end
       batch_insert

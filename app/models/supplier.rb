@@ -3,8 +3,8 @@ class Supplier
   include Mongoid::Elasticsearch
 
   # Associations
-  belongs_to :document
-  has_one :address, as: :addressable, dependent: :destroy, autosave: true
+  embedded_in :document
+  embeds_one :address, as: :addressable, inverse_of: :addressable
 
   # Fields
   field :name, type: String
