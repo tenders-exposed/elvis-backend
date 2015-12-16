@@ -3,7 +3,7 @@ class Award
   include Mongoid::Elasticsearch
 
   # Associations
-  embedded_in :document, inverse_of: :awards
+  embedded_in :document, inverse_of: :award
   embeds_one :date, class_name: "AwardDate", inverse_of: :award
 
   embeds_one :value, class_name: "Value", inverse_of: :award

@@ -2,7 +2,6 @@ class ProcuringEntity
   include Mongoid::Document
   include Mongoid::Elasticsearch
 
-
   # Associations
   embedded_in :document, inverse_of: :procuring_entity
   embeds_one :address, as: :addressable, inverse_of: :addressable

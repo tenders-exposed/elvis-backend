@@ -2,7 +2,7 @@ class Search::Query
   attr_accessor :query, :filters
 
   FIELDS =  { 'cpvs' => 'x_CPV',
-              'years' => 'awards.date.x_year',
+              'years' => 'award.date.x_year',
               'countries' => 'procuring_entity.address.countryName',
               'entities' => 'procuring_entity.x_slug',
               'suppliers' => 'suppliers.x_slug'
@@ -10,7 +10,11 @@ class Search::Query
 
   def initialize(*options)
     @filters = []
-    @query = { query: bool_query(@filters) }
+    if options.size == 0
+      @query = { query: {match_all: {}}}
+    else
+      @query = { query: bool_query(@filters) }
+    end
     build_query *options
   end
 

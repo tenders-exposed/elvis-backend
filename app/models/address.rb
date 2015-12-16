@@ -12,4 +12,16 @@ class Address
   field :email, type: String
   field :telephone, type: String
   field :x_url, type: String
+  field :country, type: String
+
+  # Callbacks
+  # before_create :country_full_name
+
+  protected
+  
+  # def country_full_name
+  #   store = Redis::HashKey.new('countries')
+  #   country = store.get(countryName)
+  # end
+
 end

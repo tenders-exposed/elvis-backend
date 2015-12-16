@@ -3,8 +3,8 @@ class Document
   include Mongoid::Elasticsearch
 
   # Associations
-  embeds_many :tenders, inverse_of: :document
-  embeds_many :awards, inverse_of: :document
+  embeds_one  :tender, inverse_of: :document
+  embeds_one  :award, inverse_of: :document
   embeds_one  :procuring_entity, inverse_of: :document
   embeds_many :suppliers, inverse_of: :document
 
@@ -24,6 +24,7 @@ class Document
   field :x_url, type: String
   field :contract_number, type: String
 
+
   # Mappings
   elasticsearch!({
     prefix_name: false,
@@ -32,6 +33,14 @@ class Document
       mappings: {
         document: {
           properties: {
+            document_id: {
+              type: "string",
+              index: "not_analyzed"
+            },
+            additionalIdentifiers: {
+              type: "string",
+              index: "not_analyzed"
+            },
             procuring_entity: {
               type: 'nested',
               properties: {
@@ -41,7 +50,8 @@ class Document
                     countryName: {
                       type: 'string',
                       index: 'not_analyzed'
-                    }
+                    },
+                    country: { type: 'string'}
                   }
                 },
                 x_slug: {
@@ -50,7 +60,9 @@ class Document
                 },
                 contractPoint: {
                   type: 'nested',
-                  properties: {type: 'string'}
+                  properties: {
+                    name: {type: 'string'}
+                  }
                 }
               }
             },
@@ -63,7 +75,7 @@ class Document
                 }
               }
             },
-            tenders: {
+            tender: {
               type: 'nested',
               properties: {
                 value: {
@@ -73,12 +85,12 @@ class Document
                     x_amountEur: {type: 'float'},
                     currency: {type: 'string'},
                     x_vat: {type: 'float'},
-                    x_vatbool: {type: 'bool'}
+                    x_vatbool: {type: 'boolean'}
                   }
                 }
               }
             },
-            awards: {
+            award: {
               type: 'nested',
               properties:{
                 date: {
@@ -114,15 +126,19 @@ class Document
                     x_amountEur: {type: 'float'},
                     currency: {type: 'string'},
                     x_vat: {type: 'float'},
-                    x_vatbool: {type: 'bool'}
+                    x_vatbool: {type: 'boolean'}
                   }
                 },
                 x_initialValue: {
                   type: 'nested',
                   properties: {
                     x_amountEur: {type: 'float'},
-                    x_vatbool: {type: 'bool'}
+                    x_vatbool: {type: 'boolean'}
                   }
+                },
+                contract_number: {
+                  type: 'string',
+                  index: 'not_analyzed'
                 }
               }
             }
