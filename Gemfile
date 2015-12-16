@@ -15,6 +15,7 @@ gem 'mongoid', '~> 5.0.0'
 gem 'mongoid-elasticsearch', '~>0.9.0'
 gem 'sidekiq'
 gem 'cld'
+gem 'redis-objects', :git => 'git@github.com:nateware/redis-objects.git'
 
 group :development do
   gem 'byebug'

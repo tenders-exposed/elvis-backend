@@ -1,3 +1,10 @@
+GIT
+  remote: git@github.com:nateware/redis-objects.git
+  revision: bc79504d45354761ce9b702ed078f7593db8748c
+  specs:
+    redis-objects (1.2.1)
+      redis (>= 3.0.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -209,6 +216,7 @@ DEPENDENCIES
   pry-rails
   rails (= 4.2.0)
   rails-api
+  redis-objects!
   sidekiq
   smarter_csv (~> 1.1.0)
   spring

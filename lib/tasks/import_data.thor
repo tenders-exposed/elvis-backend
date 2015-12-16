@@ -26,7 +26,7 @@ class ImportData < Thor
                 x_additionalInformation: row[:contract_additional_information]
         )
         @documents << doc
-        @awards << doc.awards.build(
+        @awards << doc.build_award(
                       date: {
                         x_year:  row[:contract_contract_award_year],
                         x_month: row[:contract_contract_award_month],
@@ -38,7 +38,7 @@ class ImportData < Thor
                           x_vat: row[:contract_initial_value_vat_rate].to_f
                       },
                       x_initialValue: {
-                        x_amountEur: row[:contract_initial_value_cost_eur],
+                        x_amountEur: row[:contract_initial_value_cost_eur].to_f,
                         x_vatbool: row[:contract_initial_value_vat_included]
                       },
                       value: {
@@ -67,9 +67,10 @@ class ImportData < Thor
                         postalCode: row[:contract_authority_postal_code],
                         email: row[:contract_authority_email],
                         telephone: row[:contract_authority_phone],
-                        x_url: row[:contract_authority_url]
+                        x_url: row[:contract_authority_url],
+                        country: country_full_name(row[:contract_authority_country])
                       )
-        @tenders << doc.tenders.build(
+        @tenders << doc.build_tender(
                       value: {
                         amount: row[:contract_total_value_cost].to_f,
                         x_amountEur: row[:contract_total_value_cost_eur].to_f,
@@ -90,7 +91,8 @@ class ImportData < Thor
                         postalCode: row[:contract_operator_postal_code],
                         email: row[:contract_operator_email],
                         telephone: row[:contract_operator_phone],
-                        x_url: row[:contract_operator_url]
+                        x_url: row[:contract_operator_url],
+                        country: country_full_name(row[:contract_operator_country_code])
                       )
       end
       batch_insert
@@ -120,7 +122,7 @@ class ImportData < Thor
                 x_additionalInformation: row[:additional_info]
               )
         @documents << doc
-        @awards <<  doc.awards.build(
+        @awards <<  doc.build_award(
                       date: {
                         x_year:  row[:contract_award_year],
                         x_month: row[:contract_award_month],
@@ -131,7 +133,7 @@ class ImportData < Thor
                         x_amountEur: row[:contract_value_eur].to_f,
                         x_vatbool: row[:contract_value_vat],
                         currency: row[:contract_currency],
-                        x_vat: row[:initial_value_vat_percent].to_f
+                        x_vat: row[:contract_value_vat_percent].to_f
                       },
                       initialValue: {
                         amount: row[:initial_value].to_f,
@@ -158,13 +160,14 @@ class ImportData < Thor
                         locality: row[:authority_town],
                         streetAddress: row[:authority_address],
                         postalCode: row[:authority_postal_code],
-                        x_url: row[:authority_www]
+                        x_url: row[:authority_www],
+                        country: country_full_name(row[:authority_country])
                       )
-        @tenders << doc.tenders.build(
+        @tenders << doc.build_tender(
                       value: {
                         amount: row[:tender_value].to_f,
                         currency: row[:tender_currency],
-                        x_amountEur: row[:tender_value_eur],
+                        x_amountEur: row[:tender_value_eur].to_f,
                         x_vatbool: row[:tender_value_vat],
                         x_vat: row[:tender_value_vat_percent].to_f
                       }
@@ -178,7 +181,8 @@ class ImportData < Thor
                         countryName: row[:company_country],
                         locality: row[:company_town],
                         streetAddress: row[:company_address],
-                        postalCode: row[:company_postal_code]
+                        postalCode: row[:company_postal_code],
+                        country: country_full_name(row[:company_country])
                       )
       end
       batch_insert
@@ -198,6 +202,11 @@ no_commands{
     Tender.with(ordered: false).collection.insert_many(@tenders.map(&:as_document))
     Supplier.with(ordered: false).collection.insert_many(@suppliers.map(&:as_document))
     Address.with(ordered: false).collection.insert_many(@addresses.map(&:as_document))
+  end
+
+  def country_full_name(iso)
+    store = Redis::HashKey.new('countries')
+    country = store.get(iso)
   end
 
 }
