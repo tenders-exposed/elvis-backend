@@ -1,10 +1,10 @@
 class Search::Aggregation
-  attr_accessor :subject, :name, :agg
+  attr_accessor :subject, :name, :agg, :embedded_agg
 
-  def initialize(field, embedded_aggregation = nil)
+  def initialize(field, embedded_agg = nil)
     @subject = field
-    @embedded_agg = embedded_aggregation
-    @name = field.split(".").join('_').pluralize.to_sym
+    @embedded_agg = embedded_agg
+    @name = field_name(field)
     @agg =  { aggs: {} }
     build_aggregation
   end
@@ -27,17 +27,15 @@ class Search::Aggregation
         }
       }
     }
-    normal_aggregation[@name][:aggs] = @nested_agg.agg[:aggs] if @nested_agg
+    normal_aggregation[@name][:aggs] = @embedded_agg.agg[:aggs] if @embedded_agg
     normal_aggregation
   end
 
   def nested_field_aggregation
-    field = get_nested(@subject)
-    name = field.pluralize.to_sym
     nested_aggregation = {
-      name=> {
+      collection_name => {
         nested: {
-          path: field
+          path: nested_path(subject)
         },
         aggs: basic_aggregation
       }
@@ -50,8 +48,16 @@ class Search::Aggregation
     return true
   end
 
-  def get_nested field
+  def nested_path field
     field.gsub(/(.*)\.[^\.]+$/, '\1')
+  end
+
+  def field_name field
+    field.split(".").join('_').pluralize.to_sym
+  end
+
+  def collection_name
+    field_name(nested_path(@subject))
   end
 
 end
