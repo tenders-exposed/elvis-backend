@@ -18,7 +18,7 @@ class Address
   # before_create :country_full_name
 
   protected
-  
+
   # def country_full_name
   #   store = Redis::HashKey.new('countries')
   #   country = store.get(countryName)

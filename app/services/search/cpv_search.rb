@@ -8,7 +8,7 @@ class Search::CpvSearch
 
   def get_suggestions(code = nil)
     if code
-      criteria = { match: {"ORIGINAL_CODE"=>code}}
+      criteria = { match: {"ORIGINAL_CODE"=>code.to_s}}
     else
       criteria = { match_all: {}}
     end

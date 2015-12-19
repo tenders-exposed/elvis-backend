@@ -1,7 +1,9 @@
-class Elastic::CountriesController < ApplicationController
+class Elastic::CountriesController < ApiController
 
   def index
     countries = AvailableCountries.new().with_name
-    render json: countries
+    render json: search_json_response(count: countries[:doc_count], results: countries[:results]),
+      status: 200
   end
+
 end

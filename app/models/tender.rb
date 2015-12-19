@@ -5,7 +5,7 @@ class Tender
 
   # Associations
   embedded_in :document, inverse_of: :tender
-  embeds_one :value
+  embeds_one :value, as: :valuable, inverse_of: :valuable
 
   accepts_nested_attributes_for :value
 

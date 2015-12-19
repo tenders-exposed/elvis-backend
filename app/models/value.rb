@@ -2,8 +2,8 @@ class Value
   include Mongoid::Document
 
   # Associations
-  embedded_in :tender, class_name: "Tender", inverse_of: :value
-
+  embedded_in :valuable, polymorphic: true
+  
   # Fields
   field :amount, type: Float
   field :currency, type: String

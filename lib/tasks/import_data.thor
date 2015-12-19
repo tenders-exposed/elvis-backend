@@ -28,9 +28,9 @@ class ImportData < Thor
         @documents << doc
         @awards << doc.build_award(
                       date: {
-                        x_year:  row[:contract_contract_award_year],
-                        x_month: row[:contract_contract_award_month],
-                        x_day:   row[:contract_contract_award_day]
+                        x_year:  row[:contract_contract_award_year].to_i,
+                        x_month: row[:contract_contract_award_month].to_i,
+                        x_day:   row[:contract_contract_award_day].to_i
                       },
                       initialValue: {
                           amount: row[:contract_initial_value_cost].to_f,
@@ -124,9 +124,9 @@ class ImportData < Thor
         @documents << doc
         @awards <<  doc.build_award(
                       date: {
-                        x_year:  row[:contract_award_year],
-                        x_month: row[:contract_award_month],
-                        x_day:   row[:contract_award_day]
+                        x_year:  row[:contract_award_year].to_i,
+                        x_month: row[:contract_award_month].to_i,
+                        x_day:   row[:contract_award_day].to_i
                       },
                       value: {
                         amount:   row[:contract_value].to_f,

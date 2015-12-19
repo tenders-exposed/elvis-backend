@@ -8,6 +8,8 @@ class Document
   embeds_one  :procuring_entity, inverse_of: :document
   embeds_many :suppliers, inverse_of: :document
 
+  accepts_nested_attributes_for :award
+
   # Fields
   field :document_id, type: String
   field :additionalIdentifiers, type: String
@@ -81,10 +83,10 @@ class Document
                 value: {
                   type: 'nested',
                   properties: {
-                    amount: {type: 'float'},
-                    x_amountEur: {type: 'float'},
+                    amount: {type: 'string',index: 'not_analyzed'},
+                    x_amountEur: {type: 'string',index: 'not_analyzed'},
                     currency: {type: 'string'},
-                    x_vat: {type: 'float'},
+                    x_vat: {type: 'string',index: 'not_analyzed'},
                     x_vatbool: {type: 'boolean'}
                   }
                 }
@@ -107,32 +109,32 @@ class Document
                 initialValue: {
                   type: 'nested',
                   properties: {
-                    amount: {type: 'float'},
+                    amount: {type: 'string',index: 'not_analyzed'},
                     currency: {type: 'string'},
-                    x_vat: {type: 'float'}
+                    x_vat: {type: 'string',index: 'not_analyzed'}
                   }
                 },
                 minValue: {
                   type: 'nested',
                   properties: {
-                    amount: {type: 'float'},
-                    x_amountEur: {type: 'float'}
+                    amount: {type: 'string',index: 'not_analyzed'},
+                    x_amountEur: {type: 'string',index: 'not_analyzed'}
                   }
                 },
                 value: {
                   type: 'nested',
                   properties: {
-                    amount: {type: 'float'},
-                    x_amountEur: {type: 'float'},
+                    amount: {type: 'string',index: 'not_analyzed'},
+                    x_amountEur: {type: 'string',index: 'not_analyzed'},
                     currency: {type: 'string'},
-                    x_vat: {type: 'float'},
+                    x_vat: {type: 'string',index: 'not_analyzed'},
                     x_vatbool: {type: 'boolean'}
                   }
                 },
                 x_initialValue: {
                   type: 'nested',
                   properties: {
-                    x_amountEur: {type: 'float'},
+                    x_amountEur: {type: 'string',index: 'not_analyzed'},
                     x_vatbool: {type: 'boolean'}
                   }
                 },

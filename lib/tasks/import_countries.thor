@@ -1,6 +1,6 @@
 class ImportCountries < Thor
 
-  desc "store_redis", "Store country names in Redis"
+  desc "store redis", "Store country names in Redis"
   def store_redis
     @countries = Redis::HashKey.new('countries')
     @countries.bulk_set(
