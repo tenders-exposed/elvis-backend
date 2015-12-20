@@ -93,6 +93,9 @@ Good
                  "terms": {
                    "field": "procuring_entity.address.countryName",
                    "size": 0
+                 },
+                 "aggs": {
+                    "cpvs": { "terms": {"field": "x_CPV"}}
                  }
                }
              }
@@ -193,6 +196,7 @@ Document.es.search({
           }
         }
       }
+
     }
   }
 }})
@@ -225,12 +229,11 @@ Document.es.search({
                   "aggs": {
                     "awards": {
                       "nested": {
-                        "path": "award.value",
-                          "min_doc_count": 0
+                        "path": "award.value"
                       },
                       "aggs": {
                         "awards_sum": {
-                          "sum":{
+                          "stats":{
                             "field": "award.value.x_amountEur"
                           }
                         }

@@ -3,7 +3,7 @@ class Award
   include Mongoid::Elasticsearch
 
   # Associations
-  embedded_in :document, inverse_of: :award
+  embedded_in :contract, inverse_of: :award
   embeds_one :date, class_name: "AwardDate", inverse_of: :award
 
   embeds_one :value, as: :valuable, inverse_of: :valuable
@@ -41,32 +41,32 @@ class Award
             initialValue: {
               type: 'nested',
               properties: {
-                amount: {type: 'string',index: 'not_analyzed'},
+                amount: {type: 'double'},
                 currency: {type: 'string'},
-                x_vat: {type: 'string',index: 'not_analyzed'}
+                x_vat: {type: 'double'}
               }
             },
             minValue: {
               type: 'nested',
               properties: {
-                amount: {type: 'string',index: 'not_analyzed'},
-                x_amountEur: {type: 'string',index: 'not_analyzed'}
+                amount: {type: 'double'},
+                x_amountEur: {type: 'double'}
               }
             },
             value: {
               type: 'nested',
               properties: {
-                amount: {type: 'string',index: 'not_analyzed'},
-                x_amountEur: {type: 'string',index: 'not_analyzed'},
+                amount: {type: 'double'},
+                x_amountEur: {type: 'double'},
                 currency: {type: 'string'},
-                x_vat: {type: 'string',index: 'not_analyzed'},
+                x_vat: {type: 'double'},
                 x_vatbool: {type: 'boolean'}
               }
             },
             x_initialValue: {
               type: 'nested',
               properties: {
-                x_amountEur: {type: 'string',index: 'not_analyzed'},
+                x_amountEur: {type: 'double'},
                 x_vatbool: {type: 'boolean'}
               }
             },

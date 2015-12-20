@@ -1,17 +1,17 @@
-class Document
+class Contract
   include Mongoid::Document
   include Mongoid::Elasticsearch
 
   # Associations
-  embeds_one  :tender, inverse_of: :document
-  embeds_one  :award, inverse_of: :document
-  embeds_one  :procuring_entity, inverse_of: :document
-  embeds_many :suppliers, inverse_of: :document
+  embeds_one  :tender, inverse_of: :contract
+  embeds_one  :award, inverse_of: :contract
+  embeds_one  :procuring_entity, inverse_of: :contract
+  embeds_many :suppliers, inverse_of: :contract
 
   accepts_nested_attributes_for :award
 
   # Fields
-  field :document_id, type: String
+  field :contract_id, type: String
   field :additionalIdentifiers, type: String
   field :awardCriteria, type: String
   field :procurementMethod, type: String
@@ -30,18 +30,25 @@ class Document
   # Mappings
   elasticsearch!({
     prefix_name: false,
-    index_name: 'documents',
+    index_name: 'contracts',
     index_options: {
+      settings: {
+        index: {
+          requests: {
+            cache: { enable: true}
+          }
+        }
+      },
       mappings: {
-        document: {
+        contract: {
           properties: {
-            document_id: {
-              type: "string",
-              index: "not_analyzed"
+            contract_id: {
+              type: 'string',
+              index: 'not_analyzed'
             },
             additionalIdentifiers: {
-              type: "string",
-              index: "not_analyzed"
+              type: 'string',
+              index: 'not_analyzed'
             },
             procuring_entity: {
               type: 'nested',
@@ -83,10 +90,10 @@ class Document
                 value: {
                   type: 'nested',
                   properties: {
-                    amount: {type: 'string',index: 'not_analyzed'},
-                    x_amountEur: {type: 'string',index: 'not_analyzed'},
+                    amount: {type: 'double'},
+                    x_amountEur: {type: 'double'},
                     currency: {type: 'string'},
-                    x_vat: {type: 'string',index: 'not_analyzed'},
+                    x_vat: {type: 'double'},
                     x_vatbool: {type: 'boolean'}
                   }
                 }
@@ -109,32 +116,32 @@ class Document
                 initialValue: {
                   type: 'nested',
                   properties: {
-                    amount: {type: 'string',index: 'not_analyzed'},
+                    amount: {type: 'double'},
                     currency: {type: 'string'},
-                    x_vat: {type: 'string',index: 'not_analyzed'}
+                    x_vat: {type: 'double'}
                   }
                 },
                 minValue: {
                   type: 'nested',
                   properties: {
-                    amount: {type: 'string',index: 'not_analyzed'},
-                    x_amountEur: {type: 'string',index: 'not_analyzed'}
+                    amount: {type: 'double'},
+                    x_amountEur: {type: 'double'}
                   }
                 },
                 value: {
                   type: 'nested',
                   properties: {
-                    amount: {type: 'string',index: 'not_analyzed'},
-                    x_amountEur: {type: 'string',index: 'not_analyzed'},
+                    amount: {type: 'double'},
+                    x_amountEur: {type: 'double'},
                     currency: {type: 'string'},
-                    x_vat: {type: 'string',index: 'not_analyzed'},
+                    x_vat: {type: 'double'},
                     x_vatbool: {type: 'boolean'}
                   }
                 },
                 x_initialValue: {
                   type: 'nested',
                   properties: {
-                    x_amountEur: {type: 'string',index: 'not_analyzed'},
+                    x_amountEur: {type: 'double'},
                     x_vatbool: {type: 'boolean'}
                   }
                 },

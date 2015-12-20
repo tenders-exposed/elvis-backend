@@ -4,7 +4,7 @@ gem 'bundler'
 gem 'rails', '4.2.0'
 gem 'rails-api'
 gem 'spring', :group => :development
-gem 'active_model_serializers', '0.9.3'
+gem 'jbuilder', '0.9.3'
 gem 'ffaker'
 gem 'devise', '~>3.4.1'
 gem 'figaro'

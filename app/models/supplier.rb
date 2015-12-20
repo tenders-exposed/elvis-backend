@@ -3,7 +3,7 @@ class Supplier
   include Mongoid::Elasticsearch
 
   # Associations
-  embedded_in :document
+  embedded_in :contract
   embeds_one :address, as: :addressable, inverse_of: :addressable
 
   # Fields

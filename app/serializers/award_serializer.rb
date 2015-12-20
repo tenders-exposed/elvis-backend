@@ -3,5 +3,5 @@ class AwardSerializer < ActiveModel::Serializer
 
   # has_one :value, embed: :ids, embed_in_root: true
   has_one :date, embed: :objects, embed_in_root: true
-  # belongs_to :document
+  # belongs_to :contract
 end

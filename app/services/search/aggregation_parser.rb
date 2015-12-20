@@ -3,7 +3,7 @@ class Search::AggregationParser
 
   def initialize(q, agg)
     @agg = agg
-    @response = Search::DocumentSearch.new(q, @agg).request.raw_response['aggregations'].deep_symbolize_keys
+    @response = Search::ContractSearch.new(q, @agg).request.raw_response['aggregations'].deep_symbolize_keys
   end
 
   def get_results

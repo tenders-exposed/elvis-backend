@@ -1,10 +1,11 @@
 class Search::Aggregation
-  attr_accessor :subject, :name, :agg, :embedded_agg
+  attr_accessor :subject, :name, :agg, :type, :embedded_agg
 
-  def initialize(field, embedded_agg = nil)
+  def initialize(field, type = "terms",embedded_agg = nil)
     @subject = field
     @embedded_agg = embedded_agg
     @name = field_name(field)
+    @type = type
     @agg =  { aggs: {} }
     build_aggregation
   end
@@ -21,12 +22,12 @@ class Search::Aggregation
   def basic_aggregation
     normal_aggregation = {
       @name=> {
-        terms: {
-          field: @subject,
-          size: 0
+        @type=> {
+          field: @subject
         }
       }
     }
+    normal_aggregation[@name][@type][:size] = 0 if @type == "terms"
     normal_aggregation[@name][:aggs] = @embedded_agg.agg[:aggs] if @embedded_agg
     normal_aggregation
   end

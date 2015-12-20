@@ -11,21 +11,21 @@ class ImportData < Thor
       initialize_arrays
       chunk.each do |row|
         row.each{ |key,val| row[key] = val.is_a?(String) ? val.try(:erase_html) : val }
-        doc =  Document.new(
-                document_id: row[:document_doc_no].try(:erase_html),
+        doc =  Contract.new(
+                contract_id: row[:contract_doc_no].try(:erase_html),
                 additionalIdentifiers: row[:contract_file_reference],
-                awardCriteria: row[:document_award_criteria_code],
-                procurementMethod: row[:document_procedure_code],
-                x_CPV: row[:document_cpvs].to_s.split(';'),
+                awardCriteria: row[:contract_award_criteria_code],
+                procurementMethod: row[:contract_procedure_code],
+                x_CPV: row[:contract_cpvs].to_s.split(';'),
                 x_euProject: row[:contract_relates_to_eu_project],
                 x_NUTS: row[:contract_location_nuts],
-                x_url: row[:document_doc_url],
+                x_url: row[:contract_doc_url],
                 x_lot: row[:contract_lot_number],
                 numberOfTenderers: row[:contract_offers_received_num],
                 contract_number: row[:contract_contract_number],
                 x_additionalInformation: row[:contract_additional_information]
         )
-        @documents << doc
+        @contracts << doc
         @awards << doc.build_award(
                       date: {
                         x_year:  row[:contract_contract_award_year].to_i,
@@ -106,8 +106,8 @@ class ImportData < Thor
       initialize_arrays
       chunk.each do |row|
         row.values.map!{|val| val.is_a?(String) ? val.try(:erase_html) : val }
-        doc = Document.new(
-                document_id: row[:doc_number],
+        doc = Contract.new(
+                contract_id: row[:doc_number],
                 additionalIdentifiers: row[:contract_number],
                 awardCriteria: row[:award_criteria_type],
                 procurementMethod: row[:proc_type],
@@ -121,7 +121,7 @@ class ImportData < Thor
                 numberOfTenderers: row[:nr_bids],
                 x_additionalInformation: row[:additional_info]
               )
-        @documents << doc
+        @contracts << doc
         @awards <<  doc.build_award(
                       date: {
                         x_year:  row[:contract_award_year].to_i,
@@ -192,16 +192,16 @@ class ImportData < Thor
 no_commands{
 
   def initialize_arrays
-    @documents, @awards, @entities , @tenders, @suppliers, @addresses = [], [], [], [], [], []
+    @contracts, @awards, @entities , @tenders, @suppliers, @addresses = [], [], [], [], [], []
   end
 
   def batch_insert
-    Document.with(ordered: false).collection.insert_many(@documents.map(&:as_document))
-    Award.with(ordered: false).collection.insert_many(@awards.map(&:as_document))
-    ProcuringEntity.with(ordered: false).collection.insert_many(@entities.map(&:as_document))
-    Tender.with(ordered: false).collection.insert_many(@tenders.map(&:as_document))
-    Supplier.with(ordered: false).collection.insert_many(@suppliers.map(&:as_document))
-    Address.with(ordered: false).collection.insert_many(@addresses.map(&:as_document))
+    Contract.with(ordered: false).collection.insert_many(@contracts.map(&:as_contract))
+    Award.with(ordered: false).collection.insert_many(@awards.map(&:as_contract))
+    ProcuringEntity.with(ordered: false).collection.insert_many(@entities.map(&:as_contract))
+    Tender.with(ordered: false).collection.insert_many(@tenders.map(&:as_contract))
+    Supplier.with(ordered: false).collection.insert_many(@suppliers.map(&:as_contract))
+    Address.with(ordered: false).collection.insert_many(@addresses.map(&:as_contract))
   end
 
   def country_full_name(iso)

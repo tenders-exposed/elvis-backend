@@ -1,4 +1,4 @@
-class Search::DocumentSearch
+class Search::ContractSearch
   attr_accessor :request, :result
 
   def initialize(query, aggregation = nil)
@@ -23,6 +23,6 @@ class Search::DocumentSearch
   end
 
   def request
-    Document.es.search(@request)
+    Contract.es.search(@request)
   end
 end

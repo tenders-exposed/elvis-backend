@@ -38,7 +38,7 @@ class Vis::Generator
 
   def count_edges
     suppliers = Search::Aggregation.new('suppliers.x_slug')
-    relations = Search::Aggregation.new('procuring_entity.x_slug', suppliers)
+    relations = Search::Aggregation.new('procuring_entity.x_slug',"terms", suppliers)
     results = Search::AggregationParser.new(@query, relations).get_results[:results]
     results.map! do |entity|
       entity[:results].map! do |supplier|

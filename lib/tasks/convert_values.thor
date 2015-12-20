@@ -3,7 +3,7 @@ class ConvertValues < Thor
   desc "to euro", "Convert all values in Euro"
   def to_euro
     request('2000-01-03')
-    Document.not_in(:'award.value.currency' => 'EUR').order_by{|t| [date.x_year,
+    Contract.not_in(:'award.value.currency' => 'EUR').order_by{|t| [date.x_year,
       date.x_month,date.x_day, value.currency]}.each do |doc|
         date = convert_date(doc.award.date.x_year, doc.award.date.x_month, doc.award.date.x_day)
         if date && doc.award.value.amount > 0.0 && doc.award.value.x_amountEur == 0.0

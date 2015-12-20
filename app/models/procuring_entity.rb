@@ -3,7 +3,7 @@ class ProcuringEntity
   include Mongoid::Elasticsearch
 
   # Associations
-  embedded_in :document, inverse_of: :procuring_entity
+  embedded_in :contract, inverse_of: :procuring_entity
   embeds_one :address, as: :addressable, inverse_of: :addressable
   embeds_one :contractPoint, class_name: "ContractPoint", inverse_of: :procuring_entity
 

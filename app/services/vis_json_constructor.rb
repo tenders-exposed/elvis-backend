@@ -44,7 +44,7 @@ class VisJsonConstructor
     #   }
     # }
 
-    Document.es.search(@query).raw_response
+    Contract.es.search(@query).raw_response
 
   end
 
@@ -82,7 +82,7 @@ class VisJsonConstructor
 
   def nodes_count
     related_aggregation = procuring_entities_aggregation[:procuring_entities][:aggs][:procuring_entity_names][:aggs] = suppliers_aggregation
-    aggregation = Document.es.search(aggregate_counts{suppliers_aggregation}).raw_response
+    aggregation = Contract.es.search(aggregate_counts{suppliers_aggregation}).raw_response
   end
 
 end
