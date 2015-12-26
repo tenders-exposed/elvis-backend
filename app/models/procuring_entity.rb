@@ -20,4 +20,8 @@ class ProcuringEntity
     wrapper: :load
   })
 
+  def as_json(options={})
+    super({:except => [:address,:contractPoint]}.merge(options))
+  end
+
 end

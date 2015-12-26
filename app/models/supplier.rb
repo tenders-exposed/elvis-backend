@@ -15,4 +15,8 @@ class Supplier
     index_name: 'suppliers',
     wrapper: :load
   })
+
+  def as_json(options={})
+    super({:except => [:address]}.merge(options))
+  end
 end

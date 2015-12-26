@@ -14,7 +14,7 @@ class Vis::Generator
     generate_edges
     {nodes: @nodes, edges: @edges}
   rescue => e
-    return e
+    raise e
   end
 
   def generate_nodes
@@ -26,10 +26,8 @@ class Vis::Generator
       awards_value('procuring_entity')
       awards_value('suppliers')
     else
-      raise Vis::GenerationError.new(@options[:nodes]), " \"#{@options[:nodes]}\" is not a
-       supported option for nodes"
+      raise Vis::GenerationError, "The option \"#{@options[:nodes]}\" is not supported for nodes"
     end
-    @nodes
   end
 
   def generate_edges
@@ -39,8 +37,7 @@ class Vis::Generator
     when 'sum'
       awards_value_edges
     else
-      raise Vis::GenerationError.new(@options[:edges]), " \"#{@options[:edges]}\" is not a
-       supported option for nodes"
+      raise Vis::GenerationError, "The option \"#{@options[:edges]}\" is not supported for edges"
     end
   end
 

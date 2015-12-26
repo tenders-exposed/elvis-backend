@@ -12,3 +12,6 @@
 /log/*
 !/log/.keep
 /tmp
+
+# Ignore all secret stuff  
+/config/initializers/secret_token.rb

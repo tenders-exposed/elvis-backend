@@ -16,7 +16,7 @@ class ImportData < Thor
                 additionalIdentifiers: row[:contract_file_reference],
                 awardCriteria: row[:contract_award_criteria_code],
                 procurementMethod: row[:contract_procedure_code],
-                x_CPV: row[:contract_cpvs].to_s.split(';'),
+                x_CPV: row[:contract_cpv_code].to_s.split(';'),
                 x_euProject: row[:contract_relates_to_eu_project],
                 x_NUTS: row[:contract_location_nuts],
                 x_url: row[:contract_doc_url],
@@ -25,6 +25,7 @@ class ImportData < Thor
                 contract_number: row[:contract_contract_number],
                 x_additionalInformation: row[:contract_additional_information]
         )
+        p row[:contract_cpvs]
         @contracts << doc
         @awards << doc.build_award(
                       date: {
@@ -196,12 +197,12 @@ no_commands{
   end
 
   def batch_insert
-    Contract.with(ordered: false).collection.insert_many(@contracts.map(&:as_contract))
-    Award.with(ordered: false).collection.insert_many(@awards.map(&:as_contract))
-    ProcuringEntity.with(ordered: false).collection.insert_many(@entities.map(&:as_contract))
-    Tender.with(ordered: false).collection.insert_many(@tenders.map(&:as_contract))
-    Supplier.with(ordered: false).collection.insert_many(@suppliers.map(&:as_contract))
-    Address.with(ordered: false).collection.insert_many(@addresses.map(&:as_contract))
+    Contract.with(ordered: false).collection.insert_many(@contracts.map(&:as_document))
+    Award.with(ordered: false).collection.insert_many(@awards.map(&:as_document))
+    ProcuringEntity.with(ordered: false).collection.insert_many(@entities.map(&:as_document))
+    Tender.with(ordered: false).collection.insert_many(@tenders.map(&:as_document))
+    Supplier.with(ordered: false).collection.insert_many(@suppliers.map(&:as_document))
+    Address.with(ordered: false).collection.insert_many(@addresses.map(&:as_document))
   end
 
   def country_full_name(iso)

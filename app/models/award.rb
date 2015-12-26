@@ -20,6 +20,7 @@ class Award
   field :title, type: String
   field :description, type: String
 
+
   elasticsearch!({
     prefix_name: false,
     index_name: 'awards',
@@ -80,5 +81,10 @@ class Award
     },
     wrapper: :load
   })
+
+  def as_json(options={})
+    super({:except => [:minValue, :initialValue,
+      :x_initialValue]}.merge(options))
+  end
 
 end

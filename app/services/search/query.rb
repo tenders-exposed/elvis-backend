@@ -21,10 +21,6 @@ class Search::Query
   def build_query *options
     params = options.extract_options!.stringify_keys!
     params.each do |field, value|
-      if !(FIELDS.include?(field))
-        raise Search::SearchError.new(field), " \"#{field}\" is not a
-         supported query criteria"
-      end
       @filters << create_filter(FIELDS[field], value)
     end
   end

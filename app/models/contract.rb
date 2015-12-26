@@ -158,4 +158,13 @@ class Contract
     wrapper: :load
   })
 
+  def as_json(options={})
+    result = super({:except => [:additionalIdentifiers, :contract_id, :x_lot,
+      :x_additionalInformation, :x_url, :contract_number, :x_NUTS] }.merge(options))
+    result[:award] = award.as_json
+    result[:suppliers] = suppliers.map{|s| s.as_json}
+    result[:procuring_entity] = procuring_entity.as_json
+    result
+  end
+
 end

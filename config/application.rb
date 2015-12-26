@@ -3,7 +3,7 @@ require File.expand_path('../boot', __FILE__)
 require "action_controller/railtie"
 require "action_mailer/railtie"
 require "rails/test_unit/railtie"
-require "sprockets/railtie" # Uncomment this line for Rails 3.1+
+require "sprockets/railtie"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -24,11 +24,9 @@ module Elvis
     # config.i18n.default_locale = :de
 
 
+    config.exceptions_app = self.routes
+
     Mongoid.logger.level = Logger::DEBUG
-
-    Mongoid::Document.send(:include, ActiveModel::SerializerSupport)
-    Mongoid::Criteria.delegate(:active_model_serializer, :to => :to_a)
-
 
   end
 end

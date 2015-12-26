@@ -4,8 +4,8 @@ class Api::V1::Utility::VisualizationController < Api::V1::ApiController
     query = Search::Query.new(graph_params.except(:nodes, :edges))
     results = Vis::Generator.new(query, {nodes: params[:nodes], edges: params[:edges]}).generate_graph_elements
     render json: results
-  rescue => e
-    render json: e
+  rescue Vis::GenerationError => e
+    render_error(e.message)
   end
 
   def graph_params

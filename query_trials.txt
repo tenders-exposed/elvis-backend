@@ -150,9 +150,211 @@ Good
 
 curl -XGET 'http://localhost:9200/documents/_search?pretty' -d '
 
-Document.es.search({
+Contract.es.search({
   "search_type": "count" ,
   "body":{
+  "query": {
+    "bool": {
+       "must": [
+          {
+           "nested": {
+              "path": "award",
+              "query": {
+                "nested":{
+                  "path": "award.date",
+                  "query": {
+                    "bool": {
+                      "must": [
+                        { "terms": { "award.date.x_year":  [2012], execution: "bool", _cache: true}}
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+       ]
+    }
+  },
+  "aggregations": {
+    "entities":{
+      "nested": {
+        "path": "procuring_entity"
+      },
+      "aggs": {
+        "procuring_entity_names": {
+          "terms": {
+            "field": "procuring_entity.x_slug",
+            "size": 0
+          },
+          "aggs": {
+            "suppliers": {
+              "nested": {
+                "path": "suppliers"
+              },
+              "aggs": {
+                "suppliers_names": {
+                  "terms":{
+                    "field": "suppliers.x_slug",
+                    "size": 0
+                  },
+                  "aggs":{
+                    "getting_back":{
+                      "reverse_nested":{},
+                      "aggs":{
+                        "awards":{
+                          "nested": {
+                            "path": "award.value"
+                          },
+                          "aggs":{
+                            "award_amounts":{
+                              "terms":{"field": "award.value.x_amountEur‌​"}
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+
+                }
+              }
+            }
+          }
+        }
+      }
+
+    }
+  }
+}})
+
+#Reverse nested
+
+Contract.es.search({
+  "search_type": "count" ,
+  "body":{
+  "query": {
+    "bool": {
+       "must": [
+          {
+           "nested": {
+              "path": "award",
+              "query": {
+                "nested":{
+                  "path": "award.date",
+                  "query": {
+                    "bool": {
+                      "must": [
+                        { "terms": { "award.date.x_year":  [2012], execution: "bool", _cache: true}}
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+       ]
+    }
+  },
+  "aggregations": {
+    "entities":{
+      "nested": {
+        "path": "procuring_entity"
+      },
+      "aggs": {
+        "procuring_entity_names": {
+          "terms": {
+            "field": "procuring_entity.x_slug",
+            "size": 0
+          },
+          "aggs": {
+           "back_for_suppliers": {
+             "reverse_nested": {},
+             "aggs": {
+               "suppliers":{
+                 "nested": {
+                   "path": "suppliers"
+                 },
+                 "aggs": {
+                   "supplier_names": {
+                     "terms": {
+                       "field": "suppliers.x_slug",
+                       "size": 0
+                     },
+                     "aggs": {
+                        "back_for_awards": {
+                          "reverse_nested": {},
+                          "aggs": {
+                            "awards":{
+                              "nested": {
+                                "path": "award.value"
+                              },
+                              "aggs": {
+                                "award_values": {
+                                  "terms": {
+                                    "field": "award.value.x_amountEur",
+                                    "size": 0
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+             }
+           }
+         }
+        }
+      }
+    }
+  }
+}})
+
+
+"aggs": {
+  "awards": {
+    "nested": {
+      "path": "award.value"
+    },
+    "aggs": {
+      "award_amounts": {
+        "terms":{
+          "field": "award.value.x_amountEur",
+          "size": 0
+        }
+      }
+    }
+  }
+}
+
+Contract.es.search({
+  "search_type": "count" ,
+  "body":{
+  "query": {
+    "bool": {
+       "must": [
+          {
+           "nested": {
+              "path": "award",
+              "query": {
+                "nested":{
+                  "path": "award.date",
+                  "query": {
+                    "bool": {
+                      "must": [
+                        { "terms": { "award.date.x_year":  [2012], execution: "bool", _cache: true}}
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+       ]
+    }
+  },
 "aggregations": {
     "entities":{
       "nested": {
@@ -185,56 +387,6 @@ Document.es.search({
                           "terms":{
                             "field": "award.value.x_amountEur",
                             "size": 0
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
-    }
-  }
-}})
-
-Document.es.search({
-  "search_type": "count" ,
-  "body":{
-"aggregations": {
-    "entities":{
-      "nested": {
-        "path": "procuring_entity"
-      },
-      "aggs": {
-        "procuring_entity_names": {
-          "terms": {
-            "field": "procuring_entity.x_slug",
-            "size": 0
-          },
-          "aggs": {
-            "suppliers": {
-              "nested": {
-                "path": "suppliers"
-              },
-              "aggs": {
-                "suppliers_names": {
-                  "terms":{
-                    "field": "suppliers.x_slug",
-                    "size": 0
-                  },
-                  "aggs": {
-                    "awards": {
-                      "nested": {
-                        "path": "award.value"
-                      },
-                      "aggs": {
-                        "awards_sum": {
-                          "stats":{
-                            "field": "award.value.x_amountEur"
                           }
                         }
                       }
