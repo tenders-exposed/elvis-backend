@@ -15,3 +15,5 @@
 
 # Ignore all secret stuff  
 /config/initializers/secret_token.rb
+/config/secrets.yml
+/query_trials.txt

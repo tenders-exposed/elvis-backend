@@ -16,4 +16,4 @@
 # Using secret_token for rails3 compatibility. Change to secret_key_base
 # to avoid deprecation warning.
 # Can be safely removed in a rails3 api-only application.
-Elvis::Application.config.secret_token = '772ae3a0a6ac02b628de6674375ff9e9250521a27d5e8c248d499399b540e0ba54ece406761b62e8066a3ac988a68ebc242954c1f0a6ec1fc93953a6f8bce7f9'
+Elvis::Application.config.secret_key_base = '772ae3a0a6ac02b628de6674375ff9e9250521a27d5e8c248d499399b540e0ba54ece406761b62e8066a3ac988a68ebc242954c1f0a6ec1fc93953a6f8bce7f9'

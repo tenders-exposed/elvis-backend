@@ -8,7 +8,7 @@ class Contract
   embeds_one  :procuring_entity, inverse_of: :contract
   embeds_many :suppliers, inverse_of: :contract
 
-  accepts_nested_attributes_for :award
+  accepts_nested_attributes_for :award, :tender
 
   # Fields
   field :contract_id, type: String

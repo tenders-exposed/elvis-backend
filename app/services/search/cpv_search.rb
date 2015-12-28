@@ -9,10 +9,13 @@ class Search::CpvSearch
   def get_suggestions(code = nil)
     if code
       criteria = { match: {"ORIGINAL_CODE"=>code.to_s}}
+      limits = {}
     else
       criteria = { match_all: {}}
     end
     @list = @client.search index: 'cpvs', body: {
+      from: 0,
+      size: 10000,
       query:{
         function_score: {
           query: criteria,
@@ -37,7 +40,7 @@ class Search::CpvSearch
   def parse_response
     result = @list.deep_symbolize_keys![:hits].slice(:total, :hits)
     result[:hits].map!{|hash| hash.slice(:_score,:_source)}
-    result[:hits].map!{|hash| hash[:_source].slice(:ORIGINAL_CODE, :NAME).transform_keys{|k| k.downcase}}
+    result[:hits].map!{|hash| hash[:_source].slice(:PLAIN_CODE, :NAME).transform_keys{|k| k.downcase}}
     result
   end
 

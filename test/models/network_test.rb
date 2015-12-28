@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class VisualizationControllerTest < ActionController::TestCase
+class NetworkTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

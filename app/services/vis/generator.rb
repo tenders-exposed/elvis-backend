@@ -44,7 +44,7 @@ class Vis::Generator
   def count_actors(actor)
     count_per_actor = Search::Aggregation.new("#{actor}.x_slug")
     results = get_results(count_per_actor)
-    results.map!{ |res| Vis::Node.new(res[:key], res[:doc_count], actor.singularize)}
+    results.map!{ |res| Vis::Node.new(res[:key], res[:doc_count], actor.singularize).as_json}
     @nodes.push(*results)
   end
 
@@ -54,7 +54,7 @@ class Vis::Generator
     results = get_results(relations)
     results.map! do |entity|
       entity[:results].map! do |supplier|
-        Vis::Edge.new(entity[:key], supplier[:key], supplier[:doc_count])
+        Vis::Edge.new(entity[:key], supplier[:key], supplier[:doc_count]).as_json
       end
     end
     @edges.push(*results.flatten)
@@ -64,7 +64,7 @@ class Vis::Generator
     award_values = Search::Aggregation.new('award.value.x_amountEur', nil, type: :sum)
     values_per_actor = Search::Aggregation.new("#{actor}.x_slug", award_values)
     results = get_results(values_per_actor)
-    results.map!{ |res| Vis::Node.new(res[:key], res[:value], actor.singularize)}
+    results.map!{ |res| Vis::Node.new(res[:key], res[:value], actor.singularize).as_json}
     @nodes.push(*results)
   end
 
@@ -75,7 +75,7 @@ class Vis::Generator
     results = get_results(relations)
     results.map! do |entity|
       entity[:results].map! do |supplier|
-        Vis::Edge.new(entity[:key], supplier[:key], supplier[:value])
+        Vis::Edge.new(entity[:key], supplier[:key], supplier[:value]).as_json
       end
     end
     @edges.push(*results.flatten)

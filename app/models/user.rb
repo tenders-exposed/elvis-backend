@@ -1,12 +1,17 @@
 class User
   include Mongoid::Document
 
+# Associations
+  has_many :networks, inverse_of: :user, dependent: :destroy
+
+# Config
   devise :database_authenticatable, :registerable, :confirmable,
-         :recoverable, :rememberable, :trackable, :validatable
+         :recoverable,  :validatable, :rememberable, :trackable
         #  :omniauthable
 
   acts_as_token_authenticatable
-  
+
+# Fields
   field :authentication_token
 
   ## Database authenticatable
