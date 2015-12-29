@@ -9,14 +9,14 @@ Rails.application.routes.draw do
     namespace :api do
       namespace :v1 do
 
-        resources :networks, only: [:create, :index, :show]
+        resources :networks, only: [:create, :index, :show, :update]
 
         namespace :elastic do
           get 'contracts', to: 'contracts#index'
           get 'contracts/:id', to: 'contracts#show'
-          get 'contracts/count', to: 'contracts#count'
+          get 'count', to: 'contracts#count'
           # Aggregation of document countries
-          get 'contracts/countries', to: 'countries#index'
+          get 'countries', to: 'countries#index'
           # Query cpvs for autocompletion
           get 'cpvs/autocomplete', to: 'cpvs#autocomplete'
         end

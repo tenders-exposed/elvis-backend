@@ -1,5 +1,4 @@
 class Vis::Generator
-  require 'benchmark'
   attr_accessor :query, :nodes, :edges, :options
 
   def initialize (query, options = {})

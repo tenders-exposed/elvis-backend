@@ -5,13 +5,13 @@ class AvailableCountries
   def initialize
     query = Search::Query.new()
     agg = Search::Aggregation.new("procuring_entity.address.countryName")
-    @countries = Search::AggregationParser.new(query, agg).get_results
+    response = Search::ContractSearch.new(query, agg).request.raw_response
+    @countries = Search::AggregationParser.new(response).parse_response
   end
 
   def with_name
     store = Redis::HashKey.new('countries')
-    @countries[:results].map{|hash| hash[:name] = store.get(hash[:key])}
-    @countries
+    @countries.each{|hash| hash[:name] = store.get(hash[:key])}
   end
 
 end
