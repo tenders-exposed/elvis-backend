@@ -4,11 +4,10 @@ Rails.application.routes.draw do
     devise_for :users, :controllers => {sessions: 'sessions', registrations: 'registrations',
       confirmations: 'confirmations', passwords: 'passwords'}
 
-    resources :users, only: [:show]
-
     namespace :api do
       namespace :v1 do
 
+        resources :users, only: [:show]
         resources :networks, only: [:create, :index, :show, :update]
 
         namespace :elastic do

@@ -1,10 +1,11 @@
 module Api
   module V1
-    class ApiController < ApplicationController
+    class ApiController < ActionController::API
       include Elastic
+      acts_as_token_authentication_handler_for User, fallback: :none
 
       def render_error(message)
-        render :json => {:error => message}.to_json, :status => 422
+        render json: {error: message} , status: 422
       end
 
     end
