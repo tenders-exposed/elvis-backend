@@ -12,15 +12,17 @@ class Search::AggregationParser
       pe.extend  Hashie::Extensions::DeepFind
       pe[:results] = pe.deep_find(:buckets)
       pe[:value] = pe.deep_find(:value)
+      pe[:values] = pe.deep_find(:values)
       if pe[:results]
         pe[:results].map! do |child|
           child.extend Hashie::Extensions::DeepFind
           child[:value] = child.deep_find(:value)
-          child.slice(:key, :doc_count, :value).compact
+          child[:values] = child.deep_find(:values)
+          child.slice(:key, :doc_count, :value, :values).compact
         end
         pe.slice(:key, :doc_count, :results)
       else
-        pe.slice(:key, :doc_count, :value).compact
+        pe.slice(:key, :doc_count, :value, :values).compact
       end
     end
   end

@@ -42,6 +42,10 @@ class Contract
       mappings: {
         contract: {
           properties: {
+            numberOfTenderers: {
+              type: 'integer',
+              index: 'not_analyzed'
+            },
             contract_id: {
               type: 'string',
               index: 'not_analyzed'

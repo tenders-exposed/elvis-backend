@@ -1,11 +1,13 @@
 class Search::Aggregation
-  attr_accessor :subject, :name, :agg, :type, :embedded_agg
+  attr_accessor :subject, :name, :agg, :type, :embedded_agg, :chained_agg, :agg_options
 
-  def initialize(field, embedded_agg = nil, options={})
+  def initialize(field, options={})
     @subject = field
-    @embedded_agg = embedded_agg
-    @name = field_name(field)
+    @embedded_agg = options[:embedded_agg] ? options[:embedded_agg] : nil
+    @chained_agg = options[:chained_agg] ? options[:chained_agg].agg : nil
     @type = options[:type] ? options[:type].to_sym : :terms
+    @agg_options = options.except(:type, :chained_agg, :embedded_agg).reverse_merge(default_options)
+    @name = field_name(field)
     @agg =  { aggs: {} }
     build_aggregation
   end
@@ -18,7 +20,6 @@ class Search::Aggregation
     end
   end
 
-
   def basic_aggregation
     normal_aggregation = {
       @name=> {
@@ -27,8 +28,9 @@ class Search::Aggregation
         }
       }
     }
-    normal_aggregation[@name][@type][:size] = 0 if @type == :terms
+    normal_aggregation[@name][@type].merge!(@agg_options)
     normal_aggregation[@name][:aggs] = reverse_nested_aggregation if @embedded_agg
+    normal_aggregation.merge!(@chained_agg[:aggs]) if @chained_agg
     normal_aggregation
   end
 
@@ -70,7 +72,18 @@ class Search::Aggregation
     field_name(nested_path(@subject))
   end
 
-  def reversed_agg_name 
+  def reversed_agg_name
     ('back_for_' + @embedded_agg.collection_name.to_s).to_sym
+  end
+
+  def default_options
+    case @type
+    when :terms
+      { size: 0 }
+    when :percentiles
+      { percents: [50] }
+    else
+      {}
+    end
   end
 end

@@ -4,7 +4,7 @@ class Vis::Node
 # FIXME:Remove me after the user has the ability to choose his own colors
   COLORS = {procuring_entity: 'red', supplier: 'blue'}
 
-  def initialize(id, value, type)
+  def initialize(id, value, type )
     @id = id
     @value = value
     # @label = label
