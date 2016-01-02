@@ -1,7 +1,7 @@
 module Api
   module V1
     class ApiController < ActionController::API
-      include Elastic
+      include Contracts
       acts_as_token_authentication_handler_for User, fallback: :none
 
       def render_error(message)
@@ -10,7 +10,7 @@ module Api
 
     end
 
-    module Elastic
+    module Contracts
 
       define_method(:search_json_response) do |count: nil , results: []|
         response = {search: {count: count, results: results.to_a}}

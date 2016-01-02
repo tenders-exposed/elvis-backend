@@ -10,14 +10,16 @@ Rails.application.routes.draw do
         resources :users, only: [:show]
         resources :networks, only: [:create, :index, :show, :update]
 
-        namespace :elastic do
-          get 'contracts', to: 'contracts#index'
-          get 'contracts/:id', to: 'contracts#show'
+        namespace :contracts do
+          get '/', to: 'contracts#index'
           get 'count', to: 'contracts#count'
-          # Aggregation of document countries
+          # Suppliers details in the context of a network
+          get 'suppliers', to: 'suppliers#details'
+          # All countries in the contracts
           get 'countries', to: 'countries#index'
           # Query cpvs for autocompletion
           get 'cpvs/autocomplete', to: 'cpvs#autocomplete'
+          get '/:id', to: 'contracts#show'
         end
 
 

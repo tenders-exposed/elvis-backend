@@ -1,4 +1,4 @@
-class Api::V1::Elastic::ContractsController < Api::V1::ApiController
+class Api::V1::Contracts::ContractsController < Api::V1::ApiController
 
   def index
     query = create_query
@@ -26,12 +26,12 @@ class Api::V1::Elastic::ContractsController < Api::V1::ApiController
   end
 
 
-  def search_params
+  def contract_params
     params.permit(countries: [], cpvs: [], years: [], entities: [], suppliers:[])
   end
 
   def create_query
-    Search::Query.new(search_params)
+    Search::Query.new(contract_params)
   end
 
   def json_collection(results)
