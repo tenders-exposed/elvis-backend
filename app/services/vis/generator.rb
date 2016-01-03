@@ -19,73 +19,70 @@ class Vis::Generator
   def generate_nodes
     case @options[:nodes]
     when 'count'
-      count_actors('procuring_entity')
-      count_actors('suppliers')
+      compute_suppliers(:doc_count)
+      compute_procurers(:doc_count)
     when 'sum'
-      awards_value('procuring_entity')
-      awards_value('suppliers')
+      compute_suppliers(:value, award_values_agg)
+      compute_procurers(:value, award_values_agg)
     else
-      raise Vis::GenerationError, "The option \"#{@options[:nodes]}\" is not supported for nodes"
+      raise Vis::GenerationError, "The option \"#{@options[:nodes]}\" is
+       not supported for nodes"
     end
   end
 
   def generate_edges
     case @options[:edges]
     when 'count'
-      count_edges
+      compute_edges(:doc_count)
     when 'sum'
-      awards_value_edges
+      compute_edges(:value, award_values_agg)
     else
-      raise Vis::GenerationError, "The option \"#{@options[:edges]}\" is not supported for edges"
+      raise Vis::GenerationError, "The option \"#{@options[:edges]}\" is
+       not supported for edges"
     end
   end
 
-  def count_actors(actor)
-    count_per_actor = Search::Aggregation.new("#{actor}.x_slug")
-    results = get_results(count_per_actor)
-    results.map!{ |res| Vis::Node.new(res[:key], res[:doc_count], actor.singularize).as_json}
+  def compute_suppliers(field, chained = nil)
+    chained_agg = chained ? {chained_agg: chained} : {}
+    median = Search::Aggregation.new('numberOfTenderers',
+     {type: :percentiles}.merge(chained_agg))
+    values_supplier = Search::Aggregation.new('suppliers.slug_id',
+      embedded_agg: median)
+    results = get_results(values_supplier)
+    results.map! do |res|
+      median = res[:values][:"50.0"].to_f
+      Vis::Node.new(res[:key], res[field.to_sym].round(2), 'supplier',
+       node_red_flags(median)).as_json
+    end
     @nodes.push(*results)
   end
 
-  def count_edges
-    median = Search::Aggregation.new('numberOfTenderers', type: :percentiles)
-    suppliers = Search::Aggregation.new('suppliers.x_slug', embedded_agg: median)
-    relations = Search::Aggregation.new('procuring_entity.x_slug',embedded_agg: suppliers)
+  def compute_procurers(field, embedded = nil)
+    values_entity = Search::Aggregation.new("procuring_entity.slug_id",
+     (embedded ? {embedded_agg: embedded} : {}))
+    results = get_results(values_entity)
+    results.map!{ |res| Vis::Node.new(res[:key], res[field.to_sym], 'procuring_entity').as_json}
+    @nodes.push(*results)
+  end
+
+  def compute_edges(field, embedded = nil)
+    values_per_suppliers = Search::Aggregation.new('suppliers.slug_id',
+     (embedded ? {embedded_agg: embedded} : {}))
+    relations = Search::Aggregation.new('procuring_entity.slug_id',
+     embedded_agg: values_per_suppliers)
     results = get_results(relations)
     results.map! do |entity|
       entity[:results].map! do |supplier|
-        median = supplier[:values][:"50.0"].to_f
         percent = (supplier[:doc_count] * 100.00 ) / entity[:doc_count]
-        Vis::Edge.new(entity[:key], supplier[:key], supplier[:doc_count],
-          edge_red_flags(median, percent) ).as_json
+        Vis::Edge.new(entity[:key], supplier[:key], supplier[field.to_sym],
+         edge_red_flags(percent)).as_json
       end
     end
     @edges.push(*results.flatten)
   end
 
-  def awards_value(actor)
-    award_values = Search::Aggregation.new('award.value.x_amountEur', type: :sum)
-    values_per_actor = Search::Aggregation.new("#{actor}.x_slug", embedded_agg: award_values)
-    results = get_results(values_per_actor)
-    results.map!{ |res| Vis::Node.new(res[:key], res[:value], actor.singularize).as_json}
-    @nodes.push(*results)
-  end
-
-  def awards_value_edges
-    award_values = Search::Aggregation.new('award.value.x_amountEur', type: :sum)
-    median = Search::Aggregation.new('numberOfTenderers', type: :percentiles, chained_agg: award_values)
-    values_per_suppliers = Search::Aggregation.new('suppliers.x_slug', embedded_agg: median)
-    relations = Search::Aggregation.new('procuring_entity.x_slug',embedded_agg: values_per_suppliers)
-    results = get_results(relations)
-    results.map! do |entity|
-      entity[:results].map! do |supplier|
-        median = supplier[:values][:"50.0"].to_f
-        percent = (supplier[:doc_count] * 100.00 ) / entity[:doc_count]
-        Vis::Edge.new( entity[:key], supplier[:key], supplier[:value],
-          edge_red_flags(median, percent) ).as_json
-      end
-    end
-    @edges.push(*results.flatten)
+  def award_values_agg
+    Search::Aggregation.new('award.value.x_amountEur', type: :sum)
   end
 
   def get_results(agg)
@@ -93,10 +90,16 @@ class Vis::Generator
     Search::AggregationParser.new(response).parse_response
   end
 
-  def edge_red_flags(median, percent)
+  def edge_red_flags(percent)
     hash = {}
-    hash[:no_tenderers] = median if median == 1
     hash[:percent_contracts] = percent.round(2) if percent > 50
     hash
   end
+
+  def node_red_flags(median)
+    hash = {}
+    hash[:median] = median if median == 1
+    hash
+  end
+
 end

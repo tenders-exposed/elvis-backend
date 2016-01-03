@@ -6,8 +6,8 @@ class Network
 
   #Fields
   field :query, type: Hash
-  field :name, type: String, default: "My network"
   field :options, type: Hash
-  field :graph, type: Hash
+  field :name, type: String
+  field :description, type: String
 
 end
