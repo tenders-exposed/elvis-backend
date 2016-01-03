@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ProcuringEntitiesControllerTest < ActionController::TestCase
+class Api::V1::UserControllerTest < ActionController::TestCase
   # test "the truth" do
   #   assert true
   # end

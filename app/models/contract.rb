@@ -54,6 +54,10 @@ class Contract
               type: 'string',
               index: 'not_analyzed'
             },
+            awardCriteria:{
+              type: 'string',
+              index: 'not_analyzed'
+            },
             procuring_entity: {
               type: 'nested',
               properties: {
@@ -71,6 +75,10 @@ class Contract
                   type: 'string',
                   index: 'not_analyzed'
                 },
+                slug_id: {
+                  type: 'integer',
+                  index: 'not_analyzed'
+                },
                 contractPoint: {
                   type: 'nested',
                   properties: {
@@ -84,6 +92,10 @@ class Contract
               properties: {
                 x_slug: {
                   type: 'string',
+                  index: 'not_analyzed'
+                },
+                slug_id: {
+                  type: 'integer',
                   index: 'not_analyzed'
                 }
               }

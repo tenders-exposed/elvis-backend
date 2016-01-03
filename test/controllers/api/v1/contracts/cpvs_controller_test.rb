@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CpvsControllerTest < ActionController::TestCase
+class  Api::V1::Contracts::CpvsControllerTest < ActionController::TestCase
   # test "the truth" do
   #   assert true
   # end

@@ -25,7 +25,6 @@ class ImportData < Thor
                 contract_number: row[:contract_contract_number],
                 x_additionalInformation: row[:contract_additional_information]
         )
-        p row[:contract_cpvs]
         @contracts << doc
         @awards << doc.build_award(
                       date: {
@@ -60,7 +59,7 @@ class ImportData < Thor
                     x_slug: row[:contract_authority_slug],
                     contractPoint: {name: row[:contract_authority_attention]}
                   )
-        @entities << entity
+        @procuring_entities << entity
         @addresses << entity.build_address(
                         countryName: row[:contract_authority_country],
                         locality: row[:contract_authority_town],
@@ -100,7 +99,7 @@ class ImportData < Thor
     end
   end
 
-  desc "import_ted_csv FILE", "Import data from the TED csvs"
+  desc "import_2011_csv FILE", "Import data from the TED csvs"
   def import_2011_csv(filename)
     opts= { :chunk_size => 50, :row_sep => "\n"}
     SmarterCSV.process(filename, opts) do |chunk|
@@ -155,7 +154,7 @@ class ImportData < Thor
                     x_type: row[:auth_type],
                     contractPoint: {name: row[:authority_contact_person]}
                   )
-        @entities << entity
+        @procuring_entities << entity
         @addresses << entity.build_address(
                         countryName: row[:authority_country],
                         locality: row[:authority_town],
@@ -193,13 +192,13 @@ class ImportData < Thor
 no_commands{
 
   def initialize_arrays
-    @contracts, @awards, @entities , @tenders, @suppliers, @addresses = [], [], [], [], [], []
+    @contracts, @awards, @procuring_entities , @tenders, @suppliers, @addresses = [], [], [], [], [], []
   end
 
   def batch_insert
     Contract.with(ordered: false).collection.insert_many(@contracts.map(&:as_document))
     Award.with(ordered: false).collection.insert_many(@awards.map(&:as_document))
-    ProcuringEntity.with(ordered: false).collection.insert_many(@entities.map(&:as_document))
+    ProcuringEntity.with(ordered: false).collection.insert_many(@procuring_entities.map(&:as_document))
     Tender.with(ordered: false).collection.insert_many(@tenders.map(&:as_document))
     Supplier.with(ordered: false).collection.insert_many(@suppliers.map(&:as_document))
     Address.with(ordered: false).collection.insert_many(@addresses.map(&:as_document))

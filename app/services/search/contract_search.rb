@@ -1,9 +1,11 @@
 class Search::ContractSearch
   attr_accessor :request, :result
 
-  def initialize(query, aggregation = nil)
+  def initialize(query, aggregation = nil, *fields)
     @request = { body: {}}
+    selected_fields = fields ? fields : []
     @request[:body] = query.query
+    @request[:body][:_source] = selected_fields
     if aggregation
       @request[:search_type] = "count"
       @request[:body].merge!(aggregation.agg)

@@ -13,6 +13,8 @@ class ProcuringEntity
   field :name, type: String
   field :x_slug, type: String
   field :x_type, type: String
+  field :slug_id, type: Integer
+
 
   elasticsearch!({
     prefix_name: false,

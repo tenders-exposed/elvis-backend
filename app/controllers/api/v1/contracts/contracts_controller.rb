@@ -27,7 +27,7 @@ class Api::V1::Contracts::ContractsController < Api::V1::ApiController
 
 
   def contract_params
-    params.permit(countries: [], cpvs: [], years: [], entities: [], suppliers:[])
+    params.permit(countries: [], cpvs: [], years: [], procuring_entities: [], suppliers:[])
   end
 
   def create_query
