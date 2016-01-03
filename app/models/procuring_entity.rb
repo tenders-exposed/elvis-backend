@@ -1,6 +1,5 @@
 class ProcuringEntity
   include Mongoid::Document
-  include Mongoid::Elasticsearch
 
   # Associations
   embedded_in :contract, inverse_of: :procuring_entity
@@ -15,12 +14,6 @@ class ProcuringEntity
   field :x_type, type: String
   field :slug_id, type: Integer
 
-
-  elasticsearch!({
-    prefix_name: false,
-    index_name: 'procuring_entities',
-    wrapper: :load
-  })
 
   def as_json(options={})
     super({:except => [:address,:contractPoint]}.merge(options))
