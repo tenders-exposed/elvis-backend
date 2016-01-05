@@ -4,6 +4,7 @@ class ImportCountries < Thor
   def store_redis
     @countries = Redis::HashKey.new('countries')
     @countries.bulk_set(
+      '1A' => 'Kosovo',
       'AF' => 'Afghanistan',
       'AX' => 'Aland Islands',
       'AL' => 'Albania',
@@ -214,6 +215,7 @@ class ImportCountries < Thor
       'SR' => 'Suriname',
       'SJ' => 'Svalbard And Jan Mayen',
       'SZ' => 'Swaziland',
+      'SS' => 'South Sudan',
       'SE' => 'Sweden',
       'CH' => 'Switzerland',
       'SY' => 'Syrian Arab Republic',
