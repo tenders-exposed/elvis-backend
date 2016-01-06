@@ -29,7 +29,15 @@ class Search::Aggregation
       }
     }
     normal_aggregation[@name][@type].merge!(@agg_options)
-    normal_aggregation[@name][:aggs] = reverse_nested_aggregation if @embedded_agg
+    if @embedded_agg
+      same_path = (@embedded_agg.collection_name == collection_name)
+      agg = same_path ? @embedded_agg.agg[:aggs][@embedded_agg.collection_name][:aggs] : reverse_nested_aggregation
+      if is_metric?(@type)
+        normal_aggregation.merge!(agg)
+      else
+        normal_aggregation[@name][:aggs] = agg
+      end
+    end
     normal_aggregation.merge!(@chained_agg[:aggs]) if @chained_agg
     normal_aggregation
   end
@@ -85,5 +93,11 @@ class Search::Aggregation
     else
       {}
     end
+  end
+
+  def is_metric? type
+    metric_types = [:avg, :cardinality, :extended_stats, :geo_bounds, :geo_cetroid, :value_count,
+      :max, :min, :percentiles, :percentile_ranks, :scripted_metric, :stats, :sum, :top_hits]
+    metric_types.include?(type.to_sym)
   end
 end

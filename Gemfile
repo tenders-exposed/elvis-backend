@@ -19,6 +19,7 @@ gem 'hashie'
 gem 'simple_token_authentication', '~> 1.0'
 gem 'redis-objects', :git => 'git@github.com:nateware/redis-objects.git'
 
+
 group :development do
   gem 'byebug'
   gem 'pry-rails'

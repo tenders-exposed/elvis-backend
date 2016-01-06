@@ -1,6 +1,6 @@
 class IdXslugs < Thor
 
-  desc "id per slug", "Give each x_slug an id"
+  desc "id_per_slug", "Give each x_slug an id"
   def id_per_slug
     update_suppliers
     update_procurers

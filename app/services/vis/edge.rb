@@ -6,7 +6,7 @@ class Vis::Edge
     @to = to
     @value = value
     @arrows = arrows
-    @flags = flags.slice(:percent_contracts)
+    @flags = flags.slice(:percent_contracts, :same_city)
   end
 
   def arrows

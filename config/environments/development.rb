@@ -13,4 +13,6 @@ Rails.application.configure do
 
   config.active_support.deprecation = :log
 
+  Mongo::Logger.logger.level = ::Logger::FATAL
+
 end

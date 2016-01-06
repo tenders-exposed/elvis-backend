@@ -6,7 +6,7 @@ class ImportData < Thor
 
   desc "import_ted_csv FILE", "Import data from the TED csvs"
   def import_ted_csv(filename)
-    opts= { :chunk_size => 50, :row_sep => "\n"}
+    opts= { :chunk_size => 100, :row_sep => "\n"}
     SmarterCSV.process(filename, opts) do |chunk|
       initialize_arrays
       chunk.each do |row|
@@ -67,8 +67,7 @@ class ImportData < Thor
                         postalCode: row[:contract_authority_postal_code],
                         email: row[:contract_authority_email],
                         telephone: row[:contract_authority_phone],
-                        x_url: row[:contract_authority_url],
-                        country: country_full_name(row[:contract_authority_country])
+                        x_url: row[:contract_authority_url]
                       )
         @tenders << doc.build_tender(
                       value: {
@@ -81,7 +80,8 @@ class ImportData < Thor
                     )
         supplier =  doc.suppliers.build(
                       name: row[:contract_operator_official_name],
-                      x_slug: row[:contract_operator_slug]
+                      x_slug: row[:contract_operator_slug],
+                      same_city: ((row[:contract_operator_town] == row[:contract_authority_town]) && row[:contract_operator_town]) ? 1 : 0
                     )
         @suppliers << supplier
         @addresses << supplier.build_address(
@@ -91,8 +91,7 @@ class ImportData < Thor
                         postalCode: row[:contract_operator_postal_code],
                         email: row[:contract_operator_email],
                         telephone: row[:contract_operator_phone],
-                        x_url: row[:contract_operator_url],
-                        country: country_full_name(row[:contract_operator_country_code])
+                        x_url: row[:contract_operator_url]
                       )
       end
       batch_insert
@@ -174,7 +173,8 @@ class ImportData < Thor
                     )
         supplier =  doc.suppliers.build(
                       name: row[:company_name],
-                      x_slug: row[:company_name_slug]
+                      x_slug: row[:company_name_slug],
+                      same_city: ((row[:authority_town] == row[:company_town]) && row[:company_town] ? 1 : 0
                     )
         @suppliers << supplier
         @addresses << supplier.build_address(

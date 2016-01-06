@@ -8,8 +8,6 @@ class Contract
   embeds_one  :procuring_entity, inverse_of: :contract
   embeds_many :suppliers, inverse_of: :contract
 
-  accepts_nested_attributes_for :award, :tender
-
   # Fields
   field :contract_id, type: String
   field :additionalIdentifiers, type: String
@@ -68,7 +66,10 @@ class Contract
                       type: 'string',
                       index: 'not_analyzed'
                     },
-                    country: { type: 'string'}
+                    locality:{
+                      type: 'string',
+                      index: 'not_analyzed'
+                    }
                   }
                 },
                 x_slug: {
@@ -77,6 +78,10 @@ class Contract
                 },
                 slug_id: {
                   type: 'integer',
+                  index: 'not_analyzed'
+                },
+                name: {
+                  type: 'string',
                   index: 'not_analyzed'
                 },
                 contractPoint: {
@@ -90,6 +95,10 @@ class Contract
             suppliers: {
               type: 'nested',
               properties: {
+                name: {
+                  type: 'string',
+                  index: 'not_analyzed'
+                },
                 x_slug: {
                   type: 'string',
                   index: 'not_analyzed'
@@ -97,6 +106,23 @@ class Contract
                 slug_id: {
                   type: 'integer',
                   index: 'not_analyzed'
+                },
+                same_city: {
+                  type: 'integer',
+                  index: 'not_analyzed'
+                },
+                address: {
+                  type: 'nested',
+                  properties: {
+                    locality: {
+                      type: 'string',
+                      index: 'not_analyzed'
+                    },
+                    countryName: {
+                      type: 'string',
+                      index: 'not_analyzed'
+                    }
+                  }
                 }
               }
             },

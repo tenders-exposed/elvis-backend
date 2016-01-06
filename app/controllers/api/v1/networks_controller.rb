@@ -46,8 +46,6 @@ class Api::V1::NetworksController < Api::V1::ApiController
 
   def graph_elements
     query = Search::Query.new(@network.query.symbolize_keys)
-    Rails.logger.debug("QUERY: #{query.inspect}")
-    Rails.logger.debug("OPTIONS: #{@network.options.symbolize_keys}")
     graph_elements = Vis::Generator.new(query, @network.options.symbolize_keys).generate_graph_elements
   end
 

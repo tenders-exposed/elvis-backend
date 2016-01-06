@@ -1,31 +1,47 @@
         Contract.es.search({
           "body":{
-            "_source":[ "award.title", "awardCriteria", "procuring_entity.name","award.value.x_amountEur", "numberOfTenderers" ],
             "query": {
               "bool": {
                  "must": [
                     {
-                     "nested": {
-                        "path": "award",
+                      "nested":{
+                        "path": "suppliers",
                         "query": {
-                          "nested":{
-                            "path": "award.date",
-                            "query": {
-                              "bool": {
-                                "must": [
-                                  { "terms": { "award.date.x_year":  ["2012"], execution: "bool", _cache: true}}
-                                ]
-                              }
-                            }
+                          "bool": {
+                            "must": [
+                              { "terms": { "suppliers.slug_id":  [7129], execution: "bool", _cache: true}}
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "nested":{
+                        "path": "procuring_entity",
+                        "query": {
+                          "bool": {
+                            "must": [
+                              { "terms": { "procuring_entity.slug_id":  [4154], execution: "bool", _cache: true}}
+                            ]
                           }
                         }
                       }
                     }
+
                  ]
               }
             }
           }
         })
+
+        "_source":[ "award.title", "awardCriteria", "procuring_entity.name","award.value.x_amountEur", "numberOfTenderers" ],
+        "query": {
+          "bool": {
+            "must": [
+              { "field": { "supplier.same_city":  1}}
+            ]
+          }
+        }
 
         "_source": [ "award.title", "awardCriteria", "procuring_entity.name","award.value.x_amountEur", "numberOfTenderers" ],
 
@@ -151,8 +167,10 @@ Good
 
 curl -XGET 'http://localhost:9200/documents/_search?pretty' -d '
 
+#Working percentiles
+
 Contract.es.search({
-  "search_type": "count" ,
+  "search_type": "count",
   "body":{
   "query": {
     "bool": {
@@ -197,12 +215,19 @@ Contract.es.search({
                    "path": "suppliers"
                  },
                  "aggs": {
+
                    "supplier_names": {
                      "terms": {
                        "field": "suppliers.x_slug",
                        "size": 0
                      },
                      "aggs": {
+                         "city_med": {
+                           "percentiles": {
+                             "field": "suppliers.same_city",
+                             "percents": [99]
+                           }
+                         },
                         "back_for_awards": {
                           "reverse_nested": {},
                           "aggs": {
@@ -282,46 +307,46 @@ Contract.es.search({
                     "field": "procuring_entity.address.locality",
                     "size": 0
                   },
-                  "aggs":{
-                    "back_for_suppliers": {
-                    "reverse_nested": {},
-                    "aggs": {
-                    "suppliers":{
-                    "nested": {
-                    "path": "suppliers"
-                    },
-                    "aggs": {
-                    "supplier_names": {
-                    "terms": {
-                    "field": "suppliers.x_slug",
-                    "size": 0
-                    },
-                    "aggs": {
-                    "back_for_awards": {
-                    "reverse_nested": {},
-                    "aggs": {
-                    "awards":{
-                    "nested": {
-                    "path": "award.value"
-                    },
-                    "aggs": {
-                    "award_values": {
-                    "terms": {
-                    "field": "award.value.x_amountEur",
-                    "size": 0
-                    }
-                    }
-                    }
-                    }
-                    }
-                    }
-                    }
-                    }
-                    }
-                    }
-                    }
-                    }
 
+                  "aggs":{
+                  "back_for_suppliers": {
+                  "reverse_nested": {},
+                  "aggs": {
+                  "suppliers":{
+                  "nested": {
+                  "path": "suppliers"
+                  },
+                  "aggs": {
+                  "supplier_names": {
+                  "terms": {
+                  "field": "suppliers.x_slug",
+                  "size": 0
+                  },
+                  "aggs": {
+                  "back_for_awards": {
+                  "reverse_nested": {},
+                  "aggs": {
+                  "awards":{
+                  "nested": {
+                  "path": "award.value"
+                  },
+                  "aggs": {
+                  "award_values": {
+                  "terms": {
+                  "field": "award.value.x_amountEur",
+                  "size": 0
+                  }
+                  }
+                  }
+                  }
+                  }
+                  }
+                  }
+                  }
+                  }
+                  }
+                  }
+                  }
                   }
                 }
               }
@@ -370,7 +395,7 @@ Contract.es.search({
       "aggs": {
         "procuring_entity_names": {
           "terms": {
-            "field": "procuring_entity.x_slug",
+            "field": "procuring_entity.slug_id",
             "size": 0
           },
           "aggs": {
@@ -382,24 +407,32 @@ Contract.es.search({
                    "path": "suppliers"
                  },
                  "aggs": {
+
                    "supplier_names": {
                      "terms": {
-                       "field": "suppliers.x_slug",
+                       "field": "suppliers.slug_id",
                        "size": 0
                      },
-                     "aggs": {
+                      "aggs": {
+
                         "back_for_awards": {
                           "reverse_nested": {},
                           "aggs": {
+                          "same_city": {
+                            "percentiles": {
+                              "field": "supplier.same_city",
+                              "percents": [1, 50, 95, 100],
+                               "missing": 10
+                            }
+                          },
                             "awards":{
                               "nested": {
                                 "path": "award.value"
                               },
                               "aggs": {
                                 "award_values": {
-                                  "terms": {
-                                    "field": "award.value.x_amountEur",
-                                    "size": 0
+                                  "sum": {
+                                    "field": "award.value.x_amountEur"
                                   }
                                 }
                               }
@@ -420,21 +453,26 @@ Contract.es.search({
 }})
 
 
-"aggs": {
-  "awards": {
-    "nested": {
-      "path": "award.value"
-    },
+Contract.es.search({
+  "search_type": "count" ,
+  "body":{
     "aggs": {
-      "award_amounts": {
-        "terms":{
-          "field": "award.value.x_amountEur",
-          "size": 0
+      "awards": {
+        "nested": {
+          "path": "suppliers"
+        },
+        "aggs": {
+          "award_amounts": {
+            "terms":{
+              "field": "suppliers.same_city",
+              "size": 0
+            }
+          }
         }
       }
     }
   }
-}
+})
 
 Contract.es.search({
   "search_type": "count" ,
@@ -537,3 +575,110 @@ curl -XGET 'http://localhost:9200/cpvs/_search?pretty&human' -d '{
     { "REAL_CODE" : {"order" : "asc"}}
   ]
 }'
+
+Contract.es.search({
+			"search_type": "count",
+			"body": {
+				"query": {
+					"bool": {
+						"must": [{
+							"nested": {
+								"path": "award",
+								"query": {
+									"nested": {
+										"path": "award.date",
+										"query": {
+											"bool": {
+												"must": [{
+													"terms": {
+														"award.date.x_year": [2012],
+														execution: "bool",
+														_cache: true
+													}
+												}]
+											}
+										}
+									}
+								}
+							}
+						}]
+					}
+				},
+				"aggregations": {
+					"entities": {
+						"nested": {
+							"path": "procuring_entity"
+						},
+						"aggs": {
+							"procuring_entity_names": {
+								"terms": {
+									"field": "procuring_entity.x_slug",
+									"size": 0
+								},
+								"aggs": {
+									"cities": {
+										"nested": {
+											"path": "procuring_entity.address"
+										},
+										"aggs": {
+											"back_for_suppliers": {
+												"reverse_nested": {},
+												"aggs": {
+													"suppliers": {
+														"nested": {
+															"path": "suppliers"
+														},
+														"aggs": {
+															"supplier_names": {
+																"terms": {
+																	"field": "suppliers.x_slug",
+																	"size": 0
+																},
+																"aggs": {
+																	"cities_sup": {
+																		"nested": {
+																			"path": "suppliers.address"
+																		},
+																		"aggs": {
+																			"city_names_sup": {
+																				"terms": {
+																					"field": "suppliers.address.locality",
+																					"size": 0
+																				},
+																				"aggs": {
+																					"back_for_awards": {
+																						"reverse_nested": {},
+																						"aggs": {
+																							"awards": {
+																								"nested": {
+																									"path": "award.value"
+																								},
+																								"aggs": {
+																									"award_values": {
+																										"sum": {
+																											"field": "award.value.x_amountEur"
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+                }
+							}
+            }
+          }
+        }
+      }
+    })
