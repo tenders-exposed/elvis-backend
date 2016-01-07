@@ -6,7 +6,8 @@ class User
 
 # Config
   devise :database_authenticatable, :registerable, :confirmable,
-         :recoverable,  :validatable, :rememberable, :trackable
+         :recoverable,  :validatable, :rememberable, :trackable,
+         :async
         #  :omniauthable
 
   acts_as_token_authenticatable

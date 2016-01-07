@@ -2,7 +2,7 @@ Rails.application.routes.draw do
 
   match '(:anything)' => 'application#nothing', via: [:options]
 
-  defaults format: "json" do
+  defaults format: :json do
     devise_for :users, :controllers => {sessions: 'sessions', registrations: 'registrations',
       confirmations: 'confirmations', passwords: 'passwords'}
 

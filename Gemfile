@@ -7,6 +7,7 @@ gem 'rails-api'
 gem 'spring', :group => :development
 gem 'ffaker'
 gem 'devise', '~>3.4.1'
+gem "devise-async", '~>0.10.1'
 gem 'figaro'
 gem 'mina'
 gem 'httparty'

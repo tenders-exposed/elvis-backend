@@ -74,6 +74,8 @@ GEM
       responders
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
+    devise-async (0.10.1)
+      devise (~> 3.2)
     elasticsearch (1.0.14)
       elasticsearch-api (= 1.0.14)
       elasticsearch-transport (= 1.0.14)
@@ -211,6 +213,7 @@ DEPENDENCIES
   bundler
   byebug
   devise (~> 3.4.1)
+  devise-async (~> 0.10.1)
   ffaker
   figaro
   hashie
