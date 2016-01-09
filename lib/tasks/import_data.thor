@@ -12,86 +12,86 @@ class ImportData < Thor
       chunk.each do |row|
         row.each{ |key,val| row[key] = val.is_a?(String) ? val.try(:erase_html) : val }
         doc =  Contract.new(
-                contract_id: row[:contract_doc_no].try(:erase_html),
-                additionalIdentifiers: row[:contract_file_reference],
-                awardCriteria: row[:contract_award_criteria_code],
-                procurementMethod: row[:contract_procedure_code],
-                x_CPV: row[:contract_cpv_code].to_s.split(';'),
-                x_euProject: row[:contract_relates_to_eu_project],
-                x_NUTS: row[:contract_location_nuts],
-                x_url: row[:contract_doc_url],
-                x_lot: row[:contract_lot_number],
-                numberOfTenderers: row[:contract_offers_received_num],
-                contract_number: row[:contract_contract_number],
-                x_additionalInformation: row[:contract_additional_information]
+                contract_id: row[:doc_no].try(:erase_html),
+                additionalIdentifiers: row[:file_reference],
+                awardCriteria: row[:award_criteria_code],
+                procurementMethod: row[:procedure_code],
+                x_CPV: row[:cpv_code].to_s.split(';'),
+                x_euProject: row[:relates_to_eu_project],
+                x_NUTS: row[:location_nuts],
+                x_url: row[:doc_url],
+                x_lot: row[:lot_number],
+                numberOfTenderers: row[:offers_received_num],
+                number: row[:contract_number],
+                x_additionalInformation: row[:additional_information]
         )
         @contracts << doc
         @awards << doc.build_award(
                       date: {
-                        x_year:  row[:contract_contract_award_year].to_i,
-                        x_month: row[:contract_contract_award_month].to_i,
-                        x_day:   row[:contract_contract_award_day].to_i
+                        x_year:  row[:contract_award_year].to_i,
+                        x_month: row[:contract_award_month].to_i,
+                        x_day:   row[:contract_award_day].to_i
                       },
                       initialValue: {
-                          amount: row[:contract_initial_value_cost].to_f,
-              			      currency: row[:contract_initial_value_currency],
-                          x_vat: row[:contract_initial_value_vat_rate].to_f
+                          amount: row[:initial_value_cost].to_f,
+              			      currency: row[:initial_value_currency],
+                          x_vat: row[:initial_value_vat_rate].to_f
                       },
                       x_initialValue: {
-                        x_amountEur: row[:contract_initial_value_cost_eur].to_f,
-                        x_vatbool: row[:contract_initial_value_vat_included]
+                        x_amountEur: row[:initial_value_cost_eur].to_f,
+                        x_vatbool: row[:initial_value_vat_included]
                       },
                       value: {
-                        amount:   row[:contract_contract_value_cost].to_f,
-                        x_amountEur:    row[:contract_contract_value_cost_eur].to_f,
-                        currency: row[:contract_contract_value_currency],
-                        x_vatbool: row[:contract_contract_value_vat_included]
+                        amount:   row[:contract_value_cost].to_f,
+                        x_amountEur:    row[:contract_value_cost_eur].to_f,
+                        currency: row[:contract_value_currency],
+                        x_vatbool: row[:contract_value_vat_included]
                       },
                       minValue: {
-                        amount: row[:contract_contract_value_low].to_f,
-                        x_amountEur: row[:contract_contract_value_low_eur].to_f
+                        amount: row[:contract_value_low].to_f,
+                        x_amountEur: row[:contract_value_low_eur].to_f
                       },
-                      title: row[:contract_contract_award_title],
-                      description: row[:contract_contract_description]
+                      title: row[:contract_award_title],
+                      description: row[:contract_description]
                   )
         entity =  doc.build_procuring_entity(
-                    name: row[:contract_authority_official_name],
-                    x_slug: row[:contract_authority_slug],
-                    contractPoint: {name: row[:contract_authority_attention]}
+                    name: row[:authority_official_name],
+                    x_slug: row[:authority_slug],
+                    contractPoint: {name: row[:authority_attention]}
                   )
         @procuring_entities << entity
         @addresses << entity.build_address(
-                        countryName: row[:contract_authority_country],
-                        locality: row[:contract_authority_town],
-                        streetAddress: row[:contract_authority_address],
-                        postalCode: row[:contract_authority_postal_code],
-                        email: row[:contract_authority_email],
-                        telephone: row[:contract_authority_phone],
-                        x_url: row[:contract_authority_url]
+                        countryName: row[:authority_country],
+                        locality: row[:authority_town],
+                        streetAddress: row[:authority_address],
+                        postalCode: row[:authority_postal_code],
+                        email: row[:authority_email],
+                        telephone: row[:authority_phone],
+                        x_url: row[:authority_url]
                       )
         @tenders << doc.build_tender(
                       value: {
-                        amount: row[:contract_total_value_cost].to_f,
-                        x_amountEur: row[:contract_total_value_cost_eur].to_f,
-                        x_vatbool: row[:contract_total_value_vat_included],
-                        currency: row[:contract_total_value_currency],
-                        x_vat: row[:contract_total_value_vat_rate].to_f
+                        amount: row[:total_value_cost].to_f,
+                        x_amountEur: row[:total_value_cost_eur].to_f,
+                        x_vatbool: row[:total_value_vat_included],
+                        currency: row[:total_value_currency],
+                        x_vat: row[:total_value_vat_rate].to_f
                       }
                     )
         supplier =  doc.suppliers.build(
-                      name: row[:contract_operator_official_name],
-                      x_slug: row[:contract_operator_slug],
-                      same_city: ((row[:contract_operator_town] == row[:contract_authority_town]) && row[:contract_operator_town]) ? 1 : 0
+                      name: row[:operator_official_name],
+                      x_slug: row[:operator_slug],
+                      same_city: ((row[:operator_town] == row[:authority_town]) && row[:operator_town]) ? 1 : 0
                     )
         @suppliers << supplier
         @addresses << supplier.build_address(
-                        countryName: row[:contract_operator_country_code],
-                        locality: row[:contract_operator_town],
-                        streetAddress: row[:contract_operator_address],
-                        postalCode: row[:contract_operator_postal_code],
-                        email: row[:contract_operator_email],
-                        telephone: row[:contract_operator_phone],
-                        x_url: row[:contract_operator_url]
+                        countryName: row[:operator_country_code],
+                        locality: row[:operator_town],
+                        streetAddress: row[:operator_address],
+                        postalCode: row[:operator_postal_code],
+                        email: row[:operator_email],
+                        telephone: row[:operator_phone],
+                        x_url: row[:operator_url]
                       )
       end
       batch_insert
