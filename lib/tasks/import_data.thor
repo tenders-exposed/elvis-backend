@@ -175,6 +175,7 @@ class ImportData < Thor
                       name: row[:company_name],
                       x_slug: row[:company_name_slug],
                       same_city: ((row[:authority_town] == row[:company_town]) && row[:company_town] ? 1 : 0
+                      )
                     )
         @suppliers << supplier
         @addresses << supplier.build_address(
