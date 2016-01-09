@@ -22,7 +22,7 @@ class ImportData < Thor
                 x_url: row[:doc_url],
                 x_lot: row[:lot_number],
                 numberOfTenderers: row[:offers_received_num],
-                number: row[:contract_number],
+                contract_number: row[:contract_number],
                 x_additionalInformation: row[:additional_information]
         )
         @contracts << doc
@@ -159,8 +159,7 @@ class ImportData < Thor
                         locality: row[:authority_town],
                         streetAddress: row[:authority_address],
                         postalCode: row[:authority_postal_code],
-                        x_url: row[:authority_www],
-                        country: country_full_name(row[:authority_country])
+                        x_url: row[:authority_www]
                       )
         @tenders << doc.build_tender(
                       value: {
@@ -174,15 +173,14 @@ class ImportData < Thor
         supplier =  doc.suppliers.build(
                       name: row[:company_name],
                       x_slug: row[:company_name_slug],
-                      same_city: ((row[:authority_town] == row[:company_town]) && row[:company_town] ? 1 : 0
+                      same_city: ((row[:authority_town] == row[:company_town]) && row[:company_town] ? 1 : 0)
                     )
         @suppliers << supplier
         @addresses << supplier.build_address(
                         countryName: row[:company_country],
                         locality: row[:company_town],
                         streetAddress: row[:company_address],
-                        postalCode: row[:company_postal_code],
-                        country: country_full_name(row[:company_country])
+                        postalCode: row[:company_postal_code]
                       )
       end
       batch_insert
@@ -202,11 +200,6 @@ no_commands{
     Tender.with(ordered: false).collection.insert_many(@tenders.map(&:as_document))
     Supplier.with(ordered: false).collection.insert_many(@suppliers.map(&:as_document))
     Address.with(ordered: false).collection.insert_many(@addresses.map(&:as_document))
-  end
-
-  def country_full_name(iso)
-    store = Redis::HashKey.new('countries')
-    country = store.get(iso)
   end
 
 }
