@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:nateware/redis-objects.git
+  remote: https://github.com/nateware/redis-objects
   revision: bc79504d45354761ce9b702ed078f7593db8748c
   specs:
     redis-objects (1.2.1)
@@ -233,4 +233,4 @@ DEPENDENCIES
   spring
 
 BUNDLED WITH
-   1.10.6
+   1.11.2
