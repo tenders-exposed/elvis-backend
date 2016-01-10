@@ -187,6 +187,96 @@ class ImportData < Thor
     end
   end
 
+  desc "import_2008_csv FILE", "Import data from the TED csvs"
+  def import_2008_csv(filename)
+    opts= { :chunk_size => 50, :row_sep => "\n"}
+    SmarterCSV.process(filename, opts) do |chunk|
+      initialize_arrays
+      chunk.each do |row|
+        row.values.map!{|val| val.is_a?(String) ? val.try(:erase_html) : val }
+        doc = Contract.new(
+                contract_id: row[:id],
+                additionalIdentifiers: row[:additionalidentifiersr],
+                awardCriteria: row[:awardcriteria],
+                procurementMethod: row[:procurementmethod],
+                x_CPV: row[:x_cpv].to_s.split(';'),
+                x_subcontracted: row[:x_subcontracted],
+                x_framework: row[:x_framework],
+                x_NUTS: row[:x_nuts],
+                numberOfTenderers: row[:numberoftenderers],
+                x_additionalInformation: row[:x_additionalinformation]
+              )
+        @contracts << doc
+        @awards <<  doc.build_award(
+                      date: {
+                        x_year:  row[:"award.date/x_year"].to_i,
+                        x_month: row[:"award.date/x_month"].to_i,
+                        x_day:   row[:"award.date/x_day"].to_i
+                      },
+                      value: {
+                        amount:   row[:"award.value/amount"].to_f,
+                        x_amountEur: row[:"award.value/x_amounteur"].to_f,
+                        x_vatbool: row[:"award.value/x_vatbool"],
+                        currency: row[:"award.value/currency"],
+                        x_vat: row[:"award.value/x_vat"].to_f
+                      },
+                      initialValue: {
+                        amount: row[:"award.initialvalue/amount"].to_f,
+                        currency: row[:"award.initialvalue/currency"],
+                        x_vat: row[:"award.initialvalue/x_vat"].to_f
+                      },
+                      x_initialValue: {
+                        x_amountEur: row[:"award.x_initialvalue/x_amounteur"].to_f,
+                        x_vatbool: row[:"award.x_initialvalue/x_vatbool"]
+                      },
+                      title: row[:"award.title"],
+                      description: row[:"award.description"]
+                    )
+        entity =  doc.build_procuring_entity(
+                    name: row[:"procuringentity/name"],
+                    x_slug: row[:"procuringentity/x_slug"],
+                    x_type: row[:"procuringentity/x_type"],
+                    contractPoint: {name: row[:"procuringentity/contactpoint/name"]}
+                  )
+        @procuring_entities << entity
+        @addresses << entity.build_address(
+                        countryName: row[:"procuringentity/address/countryname"],
+                        locality: row[:"procuringentity/address/locality"],
+                        streetAddress: row[:"procuringentity/address/streetAddress"],
+                        postalCode: row[:"procuringentity/address/postalCode"],
+                        email: row[:"procuringentity/address/email"],
+                        telephone: row[:"procuringentity/address/telephone"],
+                        x_url: row[:"procuringentity/address/x_url"]
+                      )
+        @tenders << doc.build_tender(
+                      value: {
+                        amount: row[:"tender.value/amount"].to_f,
+                        currency: row[:"tender.value/currency"],
+                        x_amountEur: row[:"tender.value/amount/x_amounteur"].to_f,
+                        x_vatbool: row[:"tender.value/x_vatbool"],
+                        x_vat: row[:"tender.value/x_vat"].to_f
+                      }
+                    )
+        supplier =  doc.suppliers.build(
+                      name: row[:"suppliers/name"],
+                      x_slug: row[:"suppliers/x_slug"],
+                      same_city: ((row[:"procuringentity/address/locality"] == row[:"suppliers/address/locality"]) && row[:"suppliers/address/locality"] ? 1 : 0)
+                    )
+        @suppliers << supplier
+        @addresses << supplier.build_address(
+                        countryName: row[:"suppliers/address/countryName"],
+                        locality: row[:"suppliers/address/locality"],
+                        streetAddress: row[:"suppliers/address/streetAddress"],
+                        postalCode: row[:"suppliers/address/postalCode"],
+                        email: row[:"suppliers/address/email"],
+                        telephone: row[:"suppliers/address/telephone"],
+                        x_url: row[:"suppliers/address/x_url"]
+                      )
+      end
+      batch_insert
+    end
+  end
+
 no_commands{
 
   def initialize_arrays
