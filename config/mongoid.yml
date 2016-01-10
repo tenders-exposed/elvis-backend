@@ -139,7 +139,7 @@ test:
 production:
   clients:
     default:
-      database: elvis_development
+      database: elvis_production
       hosts:
         - localhost:27017
       options:
