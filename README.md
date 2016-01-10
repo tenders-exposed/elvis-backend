@@ -1,4 +1,3 @@
-![https://codeship.com/projects/126258/status?branch=master](https://codeship.com/projects/126258/status?branch=master)
 
 Elvis is a tool that enables investivative journalists to analyze and visualize public procurements data and look for patterns that suggest corrupt behavior in public spending. 
 
