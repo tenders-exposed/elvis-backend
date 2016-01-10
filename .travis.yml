@@ -1,0 +1,16 @@
+language: ruby
+sudo: false
+before_install:
+  - gem install bundler
+cache: bundler
+rvm:
+  - 2.2.2
+  - ruby-head
+notifications:
+  email: false
+bundler_args: --without test --jobs 3 --retry 3
+services:
+  - memcached
+  - redis
+  - elasticsearch
+  - mongod
