@@ -1,5 +1,9 @@
 class CsvExportGenerator
+  include Enumerable
+  require 'securerandom'
+  require 'open3'
   require 'csv'
+  require 'yajl'
 
   attr_accessor :contracts
 
@@ -7,20 +11,31 @@ class CsvExportGenerator
     @contracts = Search::ContractSearch.new(query).search
   end
 
-  def generate_csv(file_name)
-    CSV.open("#{Rails.root}/tmp/#{file_name}", "wb") do |csv|
-      csv.add_row header
-      @contracts.each do |contract|
-        flat_contract = flatten_hash(contract.as_document)
-        values = flat_contract.values
-        # # .except(*foo_attributes)
-        csv.add_row values
-      end
+  def each
+    yield header
+
+    generate_csv do |row|
+      yield row
     end
   end
 
+  def generate_csv
+    file_name = SecureRandom.hex + '.json'
+    file_path = "#{Rails.root}/tmp/#{file_name}"
+    query_file = File.open(file_path, 'w+') {|f| f.write(@contracts.selector.to_json) }
+    command = "mongoexport --db #{Mongoid.default_client.options[:database]}" \
+     " --collection contracts --queryFile \"#{file_path}\" "
+    Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
+      while row=stdout.gets do
+        hash = Yajl::Parser.new.parse(row)
+        yield CSV.generate_line(flatten_hash(hash).values)
+      end
+    end
+    File.delete(file_path)
+  end
+
   def header
-    build_header(flatten_hash(@contracts.first.as_document).keys)
+    CSV.generate_line(build_header(flatten_hash(@contracts.first.as_document).keys))
   end
 
   def flatten_hash(hash)
