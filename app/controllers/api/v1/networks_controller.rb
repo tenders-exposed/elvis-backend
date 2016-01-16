@@ -1,6 +1,6 @@
 class Api::V1::NetworksController < Api::V1::ApiController
 
-  before_action :authenticate_user!, only: [:create, :show, :index, :update]
+  before_action :authenticate_user!, only: [:create, :index, :update]
 
   def index
     @networks = current_user.networks.pluck(:_id, :name, :description)
@@ -8,12 +8,18 @@ class Api::V1::NetworksController < Api::V1::ApiController
   end
 
   def show
-    @network = current_user.networks.find(network_params[:id])
-    render json: network_with_graph, status: 200
+    # @network = current_user.networks.find(network_params[:id])
+    @network = Network.find(network_params[:id])
+    respond_to do |format|
+      format.json { render json: network_with_graph, status: 200 }
+      format.csv  { render_csv }
+    end
   end
 
   def create
-    @network = current_user.networks.build(query: query_params, options: graph_options)
+    @network = current_user.networks.build(query: query_params, options: graph_options )
+    graph = graph_elements
+    write_graph_file(graph)
     if @network.save!
       render json: network_with_graph, status: 201
     else
@@ -24,7 +30,9 @@ class Api::V1::NetworksController < Api::V1::ApiController
   def update
     @network = current_user.networks.find(network_params[:id])
     if @network.update!(name: network_params[:name], description: network_params[:description],
-       query: query_params, options: graph_options )
+       query: @network.query.merge(query_params), options: @network.options.merge(graph_options))
+      write_graph_file(network_params[:graph]) if network_params[:graph]
+      write_graph_file(graph_elements) unless query_params.empty? && graph_options.empty?
       render json: network_with_graph, status: 200
     else
       render json: {errors: @network.errors}, status: 422
@@ -32,25 +40,72 @@ class Api::V1::NetworksController < Api::V1::ApiController
   end
 
   def network_params
-    params.permit(:id, :name, :description, :nodes, :edges,countries: [], cpvs: [],
-     years: [], procuring_entities: [], suppliers:[])
+    params.permit(:id, :name, :description,:nodes, :edges,countries: [], cpvs: [],
+     years: [], procuring_entities: [], suppliers:[]).tap do |whitelisted|
+      whitelisted[:graph] = params[:graph] if params[:graph]
+    end
   end
 
+  private
+
   def query_params
-    params = network_params.slice(:cpvs, :years, :procuring_entities, :suppliers, :countries)
+    network_params.slice(:cpvs, :years, :procuring_entities, :suppliers, :countries)
   end
 
   def graph_options
-    options = network_params.slice(:nodes, :edges)
+    network_params.slice(:nodes, :edges)
+  end
+
+  def query
+    Search::Query.new(@network.query.symbolize_keys)
   end
 
   def graph_elements
-    query = Search::Query.new(@network.query.symbolize_keys)
-    graph_elements = Vis::Generator.new(query, @network.options.symbolize_keys).generate_graph_elements
+    Vis::Generator.new(query,@network.options.symbolize_keys).generate_graph_elements
+  end
+
+  def write_graph_file(graph)
+    path = "#{Rails.root}/networks/#{@network.id}.bin"
+    File.delete(path) if File.exist?(path)
+    File.open(path, "wb") do |file|
+      file << Marshal::dump(graph)
+    end
+  end
+
+  def read_graph_file
+    path = "#{Rails.root}/networks/#{@network.id}.bin"
+    Marshal::load( File.open(path, "rb"){|f| f.read} ).as_json
   end
 
   def network_with_graph
-    @network.attributes.merge({graph: graph_elements})
+    @network.attributes.merge({graph: read_graph_file})
+  end
+
+  def render_csv
+    set_file_headers
+    set_streaming_headers
+    response.status = 200
+    self.response_body = csv_lines
+  end
+
+  def csv_lines
+    CsvExportGenerator.new(query)
+  end
+
+  def set_file_headers
+    headers['Content-Type'] = 'text/csv; charset=UTF-16LE'
+    headers['Content-disposition'] = 'attachment;'
+    headers['Content-disposition'] += " filename=\"#{file_name}.csv\""
+  end
+
+  def set_streaming_headers
+    headers['X-Accel-Buffering'] = 'no'
+    headers["Cache-Control"] ||= "no-cache"
+    headers.delete("Content-Length")
+  end
+
+  def file_name
+    "#{@network.name}_#{Time.now.strftime("%v")}"
   end
 
 end

@@ -15,6 +15,7 @@ gem 'smarter_csv', '~>1.1.0'
 gem 'mongoid', '~> 5.0.0'
 gem 'mongoid-elasticsearch', '~>0.9.0'
 gem 'sidekiq'
+gem 'yajl-ruby'
 gem 'omniauth'
 gem 'hashie'
 gem 'simple_token_authentication', '~> 1.0'
@@ -24,4 +25,5 @@ gem 'redis-objects', :git => 'https://github.com/nateware/redis-objects'
 group :development do
   gem 'byebug'
   gem 'pry-rails'
+  gem 'puma'
 end

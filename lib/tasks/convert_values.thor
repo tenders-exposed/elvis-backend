@@ -9,7 +9,6 @@ class ConvertValues < Thor
           currency = request(date,doc.award.value.currency)
           value_euro = currency * doc.award.value.amount
           doc.award.value.update_attributes!({x_amountEur: value_euro})
-          p doc.award.value
         end
     end
   end
