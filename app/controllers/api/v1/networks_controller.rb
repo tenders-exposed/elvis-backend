@@ -12,7 +12,11 @@ class Api::V1::NetworksController < Api::V1::ApiController
     @network = Network.find(network_params[:id])
     respond_to do |format|
       format.json { render json: network_with_graph, status: 200 }
-      format.csv  { send_data CsvExportGenerator.new(query).generate_csv, filename: "#{@network.name}_#{Time.now.strftime("%v")}.csv" , type: "text/csv"}
+      format.csv  do
+        file_name = "#{@network.name}_#{Time.now.strftime("%v")}.csv"
+        CsvExportGenerator.new(query).generate_csv(file_name)
+        send_file "#{Rails.root}/tmp/#{file_name}", type: "text/csv", status: 200
+      end
     end
   end
 
@@ -30,7 +34,7 @@ class Api::V1::NetworksController < Api::V1::ApiController
   def update
     @network = current_user.networks.find(network_params[:id])
     if @network.update!(name: network_params[:name], description: network_params[:description],
-       query: @network.query.merge(query_params), options: @network.options.merge(graph_options) )
+       query: @network.query.merge(query_params), options: @network.options.merge(graph_options))
       write_graph_file(network_params[:graph]) if network_params[:graph]
       write_graph_file(graph_elements) unless query_params.empty? && graph_options.empty?
       render json: network_with_graph, status: 200
@@ -49,11 +53,11 @@ class Api::V1::NetworksController < Api::V1::ApiController
   private
 
   def query_params
-    params = network_params.slice(:cpvs, :years, :procuring_entities, :suppliers, :countries)
+    network_params.slice(:cpvs, :years, :procuring_entities, :suppliers, :countries)
   end
 
   def graph_options
-    options = network_params.slice(:nodes, :edges)
+    network_params.slice(:nodes, :edges)
   end
 
   def query
@@ -61,7 +65,7 @@ class Api::V1::NetworksController < Api::V1::ApiController
   end
 
   def graph_elements
-    graph_elements = Vis::Generator.new(query, @network.options.symbolize_keys).generate_graph_elements
+    Vis::Generator.new(query,@network.options.symbolize_keys).generate_graph_elements
   end
 
   def write_graph_file(graph)
@@ -80,5 +84,6 @@ class Api::V1::NetworksController < Api::V1::ApiController
   def network_with_graph
     @network.attributes.merge({graph: read_graph_file})
   end
+
 
 end

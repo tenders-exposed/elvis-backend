@@ -1,38 +1,76 @@
         Contract.es.search({
+          "scroll": "2m",
+          "_scroll_id":"cXVlcnlUaGVuRmV0Y2g7NTsxMzY6aFlWOVpUWkFRMGlTSlMxM0JPVTNIUTsxMzk6aFlWOVpUWkFRMGlTSlMxM0JPVTNIUTsxNDA6aFlWOVpUWkFRMGlTSlMxM0JPVTNIUTsxMzc6aFlWOVpUWkFRMGlTSlMxM0JPVTNIUTsxMzg6aFlWOVpUWkFRMGlTSlMxM0JPVTNIUTswOw==",
           "body":{
+            "fields": ["_id"],
             "query": {
               "bool": {
                  "must": [
                     {
                       "nested":{
-                        "path": "suppliers",
+                        "path": "award",
                         "query": {
                           "bool": {
                             "must": [
-                              { "terms": { "suppliers.slug_id":  [7129], execution: "bool", _cache: true}}
-                            ]
-                          }
-                        }
-                      }
-                    },
-                    {
-                      "nested":{
-                        "path": "procuring_entity",
-                        "query": {
-                          "bool": {
-                            "must": [
-                              { "terms": { "procuring_entity.slug_id":  [4154], execution: "bool", _cache: true}}
+                              {
+                                "nested":{
+                                  "path": "award.date",
+                                  "query": {
+                                    "bool": {
+                                      "must":[ {"terms": { "award.date.x_year": [2008]}}]
+                                    }
+                                  }
+                                }
+                              }
                             ]
                           }
                         }
                       }
                     }
-
                  ]
               }
             }
           }
         })
+
+      Contract.es.search({
+        from: 0,
+        size: 164904,
+        body: {
+          "query": {
+            "bool": {
+               "must": [
+                  {
+                    "nested":{
+                      "path": "award",
+                      "query": {
+                        "bool": {
+                          "must": [
+                            {
+                              "nested":{
+                                "path": "award.date",
+                                "query": {
+                                  "bool": {
+                                    "must":[ {"terms": { "award.date.x_year": [2008]}}]
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+               ]
+            }
+          },
+          "script_fields": {
+            "UID": {
+              "script": {file: "get_ids"}
+            }
+          }
+        }
+      })
 
         "_source":[ "award.title", "awardCriteria", "procuring_entity.name","award.value.x_amountEur", "numberOfTenderers" ],
         "query": {

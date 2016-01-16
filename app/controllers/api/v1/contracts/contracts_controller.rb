@@ -2,7 +2,7 @@ class Api::V1::Contracts::ContractsController < Api::V1::ApiController
 
   def index
     query = create_query
-    results = Search::ContractSearch.new(query).search
+    results = Search::ContractSearch.new(query).search.to_a
     render json: search_json_response(results: json_collection(results),
       count: results.size), status: 200
   rescue => e
