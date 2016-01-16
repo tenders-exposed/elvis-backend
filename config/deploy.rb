@@ -9,7 +9,7 @@ require 'mina/rbenv'  # for rbenv support. (http://rbenv.org)
 #   repository   - Git repo to clone from. (needed by mina/git)
 #   branch       - Branch name to deploy. (needed by mina/git)
 
-set :domain, 'strix.umbra.xyz'
+set :domain, 'speedy.tenders.exposed'
 set :deploy_to, '/srv/elvis/production/backend'
 set :repository, 'https://github.com/tenders-exposed/elvis-backend.git'
 set :branch, 'master'
@@ -21,7 +21,7 @@ set :term_mode, nil
 set :shared_paths, ['config/application.yml', 'log']
 
 # Optional settings:
-  set :user, 'www-data'    # Username in the server to SSH to.
+  set :user, 'elvis'    # Username in the server to SSH to.
   set :port, '30000'     # SSH port number.
   set :forward_agent, true     # SSH forward_agent.
 
