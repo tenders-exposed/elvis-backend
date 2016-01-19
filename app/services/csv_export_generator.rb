@@ -5,7 +5,7 @@ class CsvExportGenerator
   require 'csv'
   require 'yajl'
 
-  attr_accessor :contracts
+  attr_reader :contracts
 
   def initialize(query)
     @contracts = Search::ContractSearch.new(query).search
