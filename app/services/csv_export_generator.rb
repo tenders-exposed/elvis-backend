@@ -28,7 +28,7 @@ class CsvExportGenerator
     Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
       while row=stdout.gets do
         hash = Yajl::Parser.new.parse(row)
-        yield CSV.generate_line(flatten_hash(hash).values)
+        yield line(hash)
       end
     end
     File.delete(file_path)
@@ -36,6 +36,10 @@ class CsvExportGenerator
 
   def header
     CSV.generate_line(build_header(flatten_hash(@contracts.first.as_document).keys))
+  end
+
+  def line(row)
+    CSV.generate_line(flatten_hash(row).values)
   end
 
   def flatten_hash(hash)

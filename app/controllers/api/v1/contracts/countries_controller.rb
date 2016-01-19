@@ -1,4 +1,5 @@
 class Api::V1::Contracts::CountriesController < Api::V1::ApiController
+  include SearchResponseFormatter
 
   def index
     countries = AvailableCountries.new().with_name

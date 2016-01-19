@@ -1,4 +1,5 @@
 class Api::V1::Contracts::CpvsController < Api::V1::ApiController
+  include SearchResponseFormatter
 
   def autocomplete
     cpvs = Search::CpvSearch.new().get_suggestions(cpv_params[:code])

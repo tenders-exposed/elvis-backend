@@ -22,7 +22,7 @@ set :shared_paths, ['config/application.yml', 'log']
 
 # Optional settings:
   set :user, 'elvis'    # Username in the server to SSH to.
-  set :port, '30000'     # SSH port number.
+  set :port, '3248'     # SSH port number.
   set :forward_agent, true     # SSH forward_agent.
 
 # This task is the environment that is loaded for most commands, such as
