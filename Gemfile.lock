@@ -141,6 +141,7 @@ GEM
       slop (~> 3.4)
     pry-rails (0.3.4)
       pry (>= 0.9.10)
+    puma (2.15.3)
     rack (1.6.4)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -205,6 +206,7 @@ GEM
       thread_safe (~> 0.1)
     warden (1.2.3)
       rack (>= 1.0)
+    yajl-ruby (1.2.1)
 
 PLATFORMS
   ruby
@@ -224,6 +226,7 @@ DEPENDENCIES
   mongoid-elasticsearch (~> 0.9.0)
   omniauth
   pry-rails
+  puma
   rails (= 4.2.0)
   rails-api
   redis-objects!
@@ -231,6 +234,7 @@ DEPENDENCIES
   simple_token_authentication (~> 1.0)
   smarter_csv (~> 1.1.0)
   spring
+  yajl-ruby
 
 BUNDLED WITH
    1.11.2

@@ -3,17 +3,22 @@ class Search::ContractSearch
 
   def initialize(query, aggregation = nil, *fields)
     @request = { body: {}}
-    selected_fields = fields ? fields : []
     @request[:body] = query.query
-    @request[:body][:_source] = selected_fields
+    @request[:body][:_source] = fields.flatten unless fields.empty?
     if aggregation
       @request[:search_type] = "count"
       @request[:body].merge!(aggregation.agg)
     end
   end
 
-  def search
-    request.results
+  # This function returns an isntance of Mongoid::Criteria with the ids of all contracts
+  # that match the search
+  def search(from = 0, size = self.count)
+    @request[:from] = from
+    @request[:size] = size
+    @request[:body][:script_fields]= { "ids": { "script": { file: "get_ids" } } }
+    ids = request.raw_response["hits"]["hits"].map{|result| result["_id"]}
+    Contract.any_in(id: ids)
   rescue => e
     return e
   end

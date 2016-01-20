@@ -32,14 +32,12 @@ class ImportData < Thor
                         x_month: row[:contract_award_month].to_i,
                         x_day:   row[:contract_award_day].to_i
                       },
-                      initialValue: {
-                          amount: row[:initial_value_cost].to_f,
-              			      currency: row[:initial_value_currency],
-                          x_vat: row[:initial_value_vat_rate].to_f
-                      },
                       x_initialValue: {
                         x_amountEur: row[:initial_value_cost_eur].to_f,
-                        x_vatbool: row[:initial_value_vat_included]
+                        x_vatbool: row[:initial_value_vat_included],
+                        amount: row[:initial_value_cost].to_f,
+                        currency: row[:initial_value_currency],
+                        x_vat: row[:initial_value_vat_rate].to_f
                       },
                       value: {
                         amount:   row[:contract_value_cost].to_f,
@@ -134,14 +132,12 @@ class ImportData < Thor
                         currency: row[:contract_currency],
                         x_vat: row[:contract_value_vat_percent].to_f
                       },
-                      initialValue: {
+                      x_initialValue: {
+                        x_amountEur: row[:initial_value_eur].to_f,
+                        x_vatbool: row[:initial_value_vat],
                         amount: row[:initial_value].to_f,
                         currency: row[:contract_currency],
                         x_vat: row[:initial_value_vat_percent].to_f
-                      },
-                      x_initialValue: {
-                        x_amountEur: row[:initial_value_eur].to_f,
-                        x_vatbool: row[:initial_value_vat]
                       },
                       title: row[:title_contract],
                       description: row[:short_contract_description],
@@ -221,14 +217,12 @@ class ImportData < Thor
                         currency: row[:"award.value/currency"],
                         x_vat: row[:"award.value/x_vat"].to_f
                       },
-                      initialValue: {
+                      x_initialValue: {
+                        x_amountEur: row[:"award.x_initialvalue/x_amounteur"].to_f,
+                        x_vatbool: row[:"award.x_initialvalue/x_vatbool"],
                         amount: row[:"award.initialvalue/amount"].to_f,
                         currency: row[:"award.initialvalue/currency"],
                         x_vat: row[:"award.initialvalue/x_vat"].to_f
-                      },
-                      x_initialValue: {
-                        x_amountEur: row[:"award.x_initialvalue/x_amounteur"].to_f,
-                        x_vatbool: row[:"award.x_initialvalue/x_vatbool"]
                       },
                       title: row[:"award.title"],
                       description: row[:"award.description"]

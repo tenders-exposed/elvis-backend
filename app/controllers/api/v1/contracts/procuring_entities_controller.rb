@@ -1,4 +1,5 @@
 class Api::V1::Contracts::ProcuringEntitiesController < Api::V1::ApiController
+  include SearchResponseFormatter
 
   def details
     details = get_procuring_entity_details

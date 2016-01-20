@@ -8,9 +8,8 @@ class Award
   embeds_one :value, as: :valuable, inverse_of: :valuable
   embeds_one :x_initialValue, class_name: "XInitialValue", inverse_of: :award
   embeds_one :minValue, class_name: "MinValue", inverse_of: :award
-  embeds_one :initialValue, class_name: "InitialValue", inverse_of: :award
 
-  accepts_nested_attributes_for :initialValue, :minValue, :value, :x_initialValue, :date
+  accepts_nested_attributes_for :minValue, :value, :x_initialValue, :date
 
 
   # Fields
@@ -21,8 +20,7 @@ class Award
 
 
   def as_json(options={})
-    super({:except => [:minValue, :initialValue,
-      :x_initialValue]}.merge(options))
+    super({:except => [:minValue, :x_initialValue]}.merge(options))
   end
 
 end

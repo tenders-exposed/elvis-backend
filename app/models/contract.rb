@@ -155,14 +155,6 @@ class Contract
                     x_day: {type: 'integer'}
                   }
                 },
-                initialValue: {
-                  type: 'nested',
-                  properties: {
-                    amount: {type: 'double'},
-                    currency: {type: 'string'},
-                    x_vat: {type: 'double'}
-                  }
-                },
                 minValue: {
                   type: 'nested',
                   properties: {
@@ -183,6 +175,9 @@ class Contract
                 x_initialValue: {
                   type: 'nested',
                   properties: {
+                    amount: {type: 'double'},
+                    currency: {type: 'string'},
+                    x_vat: {type: 'double'},
                     x_amountEur: {type: 'double'},
                     x_vatbool: {type: 'boolean'}
                   }
