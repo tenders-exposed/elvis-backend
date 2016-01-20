@@ -9,7 +9,10 @@ require 'mina/rbenv'  # for rbenv support. (http://rbenv.org)
 #   repository   - Git repo to clone from. (needed by mina/git)
 #   branch       - Branch name to deploy. (needed by mina/git)
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 69f3b8ca25a55d9e33ac35450764c4cc8a80fbbe
 set :domain, 'speedy.tenders.exposed'
 set :deploy_to, '/srv/elvis/production/backend'
 set :repository, 'https://github.com/tenders-exposed/elvis-backend.git'
