@@ -8,6 +8,9 @@ class Contract
   embeds_one  :procuring_entity, inverse_of: :contract
   embeds_many :suppliers, inverse_of: :contract
 
+  # Indexes
+  index({ "procuring_entity.x_slug": "hashed" }, {name: "procurer_xslug_index" })
+
   # Fields
   field :contract_id, type: String
   field :additionalIdentifiers, type: String
