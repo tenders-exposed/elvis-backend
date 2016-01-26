@@ -1,13 +1,10 @@
 Rails.application.routes.draw do
 
-  match '(:anything)' => 'application#nothing', via: [:options]
-
-
   defaults format: :json do
 
     devise_for :users, path: "api/v1/users", :controllers => {sessions: 'sessions', registrations: 'registrations',
       confirmations: 'confirmations', passwords: 'passwords'}
-      
+
     namespace :api do
       namespace :v1 do
 
