@@ -13,17 +13,17 @@ class ImportData < Thor
         row.each{ |key,val| row[key] = val.is_a?(String) ? val.try(:erase_html) : val }
         doc =  Contract.new(
                 contract_id: row[:doc_no].try(:erase_html),
-                additionalIdentifiers: row[:file_reference],
-                awardCriteria: row[:award_criteria_code],
-                procurementMethod: row[:procedure_code],
+                additional_identifiers: row[:file_reference],
+                award_criteria: row[:award_criteria_code],
+                procurement_method: row[:procedure_code],
                 x_CPV: row[:cpv_code].to_s.split(';'),
-                x_euProject: row[:relates_to_eu_project],
+                x_eu_project: row[:relates_to_eu_project],
                 x_NUTS: row[:location_nuts],
                 x_url: row[:doc_url],
                 x_lot: row[:lot_number],
-                numberOfTenderers: row[:offers_received_num],
+                number_of_tenderers: row[:offers_received_num],
                 contract_number: row[:contract_number],
-                x_additionalInformation: row[:additional_information]
+                x_additional_information: row[:additional_information]
         )
         @contracts << doc
         @awards << doc.build_award(
@@ -32,8 +32,8 @@ class ImportData < Thor
                         x_month: row[:contract_award_month].to_i,
                         x_day:   row[:contract_award_day].to_i
                       },
-                      x_initialValue: {
-                        x_amountEur: row[:initial_value_cost_eur].to_f,
+                      x_initial_value: {
+                        x_amount_eur: row[:initial_value_cost_eur].to_f,
                         x_vatbool: row[:initial_value_vat_included],
                         amount: row[:initial_value_cost].to_f,
                         currency: row[:initial_value_currency],
@@ -41,13 +41,13 @@ class ImportData < Thor
                       },
                       value: {
                         amount:   row[:contract_value_cost].to_f,
-                        x_amountEur:    row[:contract_value_cost_eur].to_f,
+                        x_amount_eur:    row[:contract_value_cost_eur].to_f,
                         currency: row[:contract_value_currency],
                         x_vatbool: row[:contract_value_vat_included]
                       },
-                      minValue: {
+                      min_value: {
                         amount: row[:contract_value_low].to_f,
-                        x_amountEur: row[:contract_value_low_eur].to_f
+                        x_amount_eur: row[:contract_value_low_eur].to_f
                       },
                       title: row[:contract_award_title],
                       description: row[:contract_description]
@@ -55,14 +55,14 @@ class ImportData < Thor
         entity =  doc.build_procuring_entity(
                     name: row[:authority_official_name],
                     x_slug: row[:authority_slug],
-                    contractPoint: {name: row[:authority_attention]}
+                    contract_point: {name: row[:authority_attention]}
                   )
         @procuring_entities << entity
         @addresses << entity.build_address(
-                        countryName: row[:authority_country],
+                        country_name: row[:authority_country],
                         locality: row[:authority_town],
-                        streetAddress: row[:authority_address],
-                        postalCode: row[:authority_postal_code],
+                        street_address: row[:authority_address],
+                        postal_code: row[:authority_postal_code],
                         email: row[:authority_email],
                         telephone: row[:authority_phone],
                         x_url: row[:authority_url]
@@ -70,7 +70,7 @@ class ImportData < Thor
         @tenders << doc.build_tender(
                       value: {
                         amount: row[:total_value_cost].to_f,
-                        x_amountEur: row[:total_value_cost_eur].to_f,
+                        x_amount_eur: row[:total_value_cost_eur].to_f,
                         x_vatbool: row[:total_value_vat_included],
                         currency: row[:total_value_currency],
                         x_vat: row[:total_value_vat_rate].to_f
@@ -79,14 +79,14 @@ class ImportData < Thor
         supplier =  doc.suppliers.build(
                       name: row[:operator_official_name],
                       x_slug: row[:operator_slug],
-                      same_city: ((row[:operator_town] == row[:authority_town]) && row[:operator_town]) ? 1 : 0
+                      x_same_city: ((row[:operator_town] == row[:authority_town]) && row[:operator_town]) ? 1 : 0
                     )
         @suppliers << supplier
         @addresses << supplier.build_address(
-                        countryName: row[:operator_country_code],
+                        country_name: row[:operator_country],
                         locality: row[:operator_town],
-                        streetAddress: row[:operator_address],
-                        postalCode: row[:operator_postal_code],
+                        street_address: row[:operator_address],
+                        postal_code: row[:operator_postal_code],
                         email: row[:operator_email],
                         telephone: row[:operator_phone],
                         x_url: row[:operator_url]
@@ -105,18 +105,18 @@ class ImportData < Thor
         row.values.map!{|val| val.is_a?(String) ? val.try(:erase_html) : val }
         doc = Contract.new(
                 contract_id: row[:doc_number],
-                additionalIdentifiers: row[:contract_number],
-                awardCriteria: row[:award_criteria_type],
-                procurementMethod: row[:proc_type],
+                additional_identifiers: row[:contract_number],
+                award_criteria: row[:award_criteria_type],
+                procurement_method: row[:proc_type],
                 contract_number: row[:contract_number],
                 x_CPV: row[:cpv].to_s.split(';'),
-                x_euProject: row[:eu_project],
+                x_eu_project: row[:eu_project],
                 x_framework: row[:framework],
                 x_NUTS: row[:NUTS],
                 x_url: row[:url],
                 x_lot: row[:lot],
-                numberOfTenderers: row[:nr_bids],
-                x_additionalInformation: row[:additional_info]
+                number_of_tenderers: row[:nr_bids],
+                x_additional_information: row[:additional_info]
               )
         @contracts << doc
         @awards <<  doc.build_award(
@@ -127,13 +127,13 @@ class ImportData < Thor
                       },
                       value: {
                         amount:   row[:contract_value].to_f,
-                        x_amountEur: row[:contract_value_eur].to_f,
+                        x_amount_eur: row[:contract_value_eur].to_f,
                         x_vatbool: row[:contract_value_vat],
                         currency: row[:contract_currency],
                         x_vat: row[:contract_value_vat_percent].to_f
                       },
-                      x_initialValue: {
-                        x_amountEur: row[:initial_value_eur].to_f,
+                      x_initial_value: {
+                        x_amount_eur: row[:initial_value_eur].to_f,
                         x_vatbool: row[:initial_value_vat],
                         amount: row[:initial_value].to_f,
                         currency: row[:contract_currency],
@@ -147,21 +147,21 @@ class ImportData < Thor
                     name: row[:authority_name],
                     x_slug: row[:authority_name_slug],
                     x_type: row[:auth_type],
-                    contractPoint: {name: row[:authority_contact_person]}
+                    contract_point: {name: row[:authority_contact_person]}
                   )
         @procuring_entities << entity
         @addresses << entity.build_address(
-                        countryName: row[:authority_country],
+                        country_name: row[:authority_country],
                         locality: row[:authority_town],
-                        streetAddress: row[:authority_address],
-                        postalCode: row[:authority_postal_code],
+                        street_address: row[:authority_address],
+                        postal_code: row[:authority_postal_code],
                         x_url: row[:authority_www]
                       )
         @tenders << doc.build_tender(
                       value: {
                         amount: row[:tender_value].to_f,
                         currency: row[:tender_currency],
-                        x_amountEur: row[:tender_value_eur].to_f,
+                        x_amount_eur: row[:tender_value_eur].to_f,
                         x_vatbool: row[:tender_value_vat],
                         x_vat: row[:tender_value_vat_percent].to_f
                       }
@@ -169,14 +169,15 @@ class ImportData < Thor
         supplier =  doc.suppliers.build(
                       name: row[:company_name],
                       x_slug: row[:company_name_slug],
-                      same_city: ((row[:authority_town] == row[:company_town]) && row[:company_town] ? 1 : 0)
+                      x_same_city: ((row[:authority_town] == row[:company_town]) && row[:company_town] ? 1 : 0
+                      )
                     )
         @suppliers << supplier
         @addresses << supplier.build_address(
-                        countryName: row[:company_country],
+                        country_name: row[:company_country],
                         locality: row[:company_town],
-                        streetAddress: row[:company_address],
-                        postalCode: row[:company_postal_code]
+                        street_address: row[:company_address],
+                        postal_code: row[:company_postal_code]
                       )
       end
       batch_insert
@@ -192,15 +193,15 @@ class ImportData < Thor
         row.values.map!{|val| val.is_a?(String) ? val.try(:erase_html) : val }
         doc = Contract.new(
                 contract_id: row[:id],
-                additionalIdentifiers: row[:additionalidentifiersr],
-                awardCriteria: row[:awardcriteria],
-                procurementMethod: row[:procurementmethod],
+                additional_identifiers: row[:additionalidentifiers],
+                award_criteria: row[:awardcriteria],
+                procurement_method: row[:procurementmethod],
                 x_CPV: row[:x_cpv].to_s.split(';'),
                 x_subcontracted: row[:x_subcontracted],
                 x_framework: row[:x_framework],
                 x_NUTS: row[:x_nuts],
-                numberOfTenderers: row[:numberoftenderers],
-                x_additionalInformation: row[:x_additionalinformation]
+                number_of_tenderers: row[:numberoftenderers],
+                x_additional_information: row[:x_additionalinformation]
               )
         @contracts << doc
         @awards <<  doc.build_award(
@@ -211,13 +212,13 @@ class ImportData < Thor
                       },
                       value: {
                         amount:   row[:"award.value/amount"].to_f,
-                        x_amountEur: row[:"award.value/x_amounteur"].to_f,
+                        x_amount_eur: row[:"award.value/x_amounteur"].to_f,
                         x_vatbool: row[:"award.value/x_vatbool"],
                         currency: row[:"award.value/currency"],
                         x_vat: row[:"award.value/x_vat"].to_f
                       },
-                      x_initialValue: {
-                        x_amountEur: row[:"award.x_initialvalue/x_amounteur"].to_f,
+                      x_initial_value: {
+                        x_amount_eur: row[:"award.x_initialvalue/x_amounteur"].to_f,
                         x_vatbool: row[:"award.x_initialvalue/x_vatbool"],
                         amount: row[:"award.initialvalue/amount"].to_f,
                         currency: row[:"award.initialvalue/currency"],
@@ -230,14 +231,14 @@ class ImportData < Thor
                     name: row[:"procuringentity/name"],
                     x_slug: row[:"procuringentity/x_slug"],
                     x_type: row[:"procuringentity/x_type"],
-                    contractPoint: {name: row[:"procuringentity/contactpoint/name"]}
+                    contract_point: {name: row[:"procuringentity/contactpoint/name"]}
                   )
         @procuring_entities << entity
         @addresses << entity.build_address(
-                        countryName: row[:"procuringentity/address/countryname"],
+                        country_name: row[:"procuringentity/address/countryname"],
                         locality: row[:"procuringentity/address/locality"],
-                        streetAddress: row[:"procuringentity/address/streetAddress"],
-                        postalCode: row[:"procuringentity/address/postalCode"],
+                        street_address: row[:"procuringentity/address/streetaddress"],
+                        postal_code: row[:"procuringentity/address/postalcode"],
                         email: row[:"procuringentity/address/email"],
                         telephone: row[:"procuringentity/address/telephone"],
                         x_url: row[:"procuringentity/address/x_url"]
@@ -246,7 +247,7 @@ class ImportData < Thor
                       value: {
                         amount: row[:"tender.value/amount"].to_f,
                         currency: row[:"tender.value/currency"],
-                        x_amountEur: row[:"tender.value/amount/x_amounteur"].to_f,
+                        x_amount_eur: row[:"tender.value/amount/x_amounteur"].to_f,
                         x_vatbool: row[:"tender.value/x_vatbool"],
                         x_vat: row[:"tender.value/x_vat"].to_f
                       }
@@ -254,14 +255,14 @@ class ImportData < Thor
         supplier =  doc.suppliers.build(
                       name: row[:"suppliers/name"],
                       x_slug: row[:"suppliers/x_slug"],
-                      same_city: ((row[:"procuringentity/address/locality"] == row[:"suppliers/address/locality"]) && row[:"suppliers/address/locality"] ? 1 : 0)
+                      x_same_city: ((row[:"procuringentity/address/locality"] == row[:"suppliers/address/locality"]) && row[:"suppliers/address/locality"] ? 1 : 0)
                     )
         @suppliers << supplier
         @addresses << supplier.build_address(
-                        countryName: row[:"suppliers/address/countryName"],
+                        country_name: row[:"suppliers/address/countryname"],
                         locality: row[:"suppliers/address/locality"],
-                        streetAddress: row[:"suppliers/address/streetAddress"],
-                        postalCode: row[:"suppliers/address/postalCode"],
+                        street_address: row[:"suppliers/address/streetaddress"],
+                        postal_code: row[:"suppliers/address/postalcode"],
                         email: row[:"suppliers/address/email"],
                         telephone: row[:"suppliers/address/telephone"],
                         x_url: row[:"suppliers/address/x_url"]

@@ -1,6 +1,5 @@
 class Api::V1::NetworksController < Api::V1::ApiController
   include ContractsCsvExporter
-
   before_action :authenticate_user!, only: [:create, :index, :update]
 
   def index

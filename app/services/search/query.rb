@@ -3,9 +3,9 @@ class Search::Query
 
   FIELDS =  { 'cpvs' => 'x_CPV',
               'years' => 'award.date.x_year',
-              'countries' => 'procuring_entity.address.countryName',
-              'procuring_entities' => 'procuring_entity.slug_id',
-              'suppliers' => 'suppliers.slug_id'
+              'countries' => 'procuring_entity.address.country_name',
+              'procuring_entities' => 'procuring_entity.x_slug_id',
+              'suppliers' => 'suppliers.x_slug_id'
             }.freeze
 
   def initialize(*options)

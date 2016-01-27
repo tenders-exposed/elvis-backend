@@ -11,7 +11,7 @@ class Search::ContractSearch
     end
   end
 
-  # This function returns an isntance of Mongoid::Criteria with the ids of all contracts
+  # This function returns an instance of Mongoid::Criteria with the ids of all contracts
   # that match the search
   def search(from = 0, size = self.count)
     @request[:from] = from

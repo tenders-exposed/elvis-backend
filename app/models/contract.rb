@@ -13,17 +13,17 @@ class Contract
 
   # Fields
   field :contract_id, type: String
-  field :additionalIdentifiers, type: String
-  field :awardCriteria, type: String
-  field :procurementMethod, type: String
+  field :additional_identifiers, type: String
+  field :award_criteria, type: String
+  field :procurement_method, type: String
   field :x_CPV, type: Array
   field :x_NUTS, type: String
-  field :x_euProject, type: String
+  field :x_eu_project, type: String
   field :x_framework, type: String
   field :x_subcontracted, type: Boolean
-  field :numberOfTenderers, type: String
+  field :number_of_tenderers, type: String
   field :x_lot, type: String
-  field :x_additionalInformation, type: String
+  field :x_additional_information, type: String
   field :x_url, type: String
   field :contract_number, type: String
 
@@ -43,7 +43,7 @@ class Contract
       mappings: {
         contract: {
           properties: {
-            numberOfTenderers: {
+            number_of_tenderers: {
               type: 'integer',
               index: 'not_analyzed'
             },
@@ -51,11 +51,11 @@ class Contract
               type: 'string',
               index: 'not_analyzed'
             },
-            additionalIdentifiers: {
+            additional_identifiers: {
               type: 'string',
               index: 'not_analyzed'
             },
-            awardCriteria:{
+            award_criteria:{
               type: 'string',
               index: 'not_analyzed'
             },
@@ -65,7 +65,7 @@ class Contract
                 address: {
                   type: 'nested',
                   properties: {
-                    countryName: {
+                    country_name: {
                       type: 'string',
                       index: 'not_analyzed'
                     },
@@ -79,7 +79,7 @@ class Contract
                   type: 'string',
                   index: 'not_analyzed'
                 },
-                slug_id: {
+                x_slug_id: {
                   type: 'integer',
                   index: 'not_analyzed'
                 },
@@ -87,7 +87,7 @@ class Contract
                   type: 'string',
                   index: 'not_analyzed'
                 },
-                contractPoint: {
+                contract_point: {
                   type: 'nested',
                   properties: {
                     name: {type: 'string'}
@@ -106,11 +106,11 @@ class Contract
                   type: 'string',
                   index: 'not_analyzed'
                 },
-                slug_id: {
+                x_slug_id: {
                   type: 'integer',
                   index: 'not_analyzed'
                 },
-                same_city: {
+                x_same_city: {
                   type: 'integer',
                   index: 'not_analyzed'
                 },
@@ -121,7 +121,7 @@ class Contract
                       type: 'string',
                       index: 'not_analyzed'
                     },
-                    countryName: {
+                    country_name: {
                       type: 'string',
                       index: 'not_analyzed'
                     }
@@ -136,7 +136,7 @@ class Contract
                   type: 'nested',
                   properties: {
                     amount: {type: 'double'},
-                    x_amountEur: {type: 'double'},
+                    x_amount_eur: {type: 'double'},
                     currency: {type: 'string'},
                     x_vat: {type: 'double'},
                     x_vatbool: {type: 'boolean'}
@@ -158,30 +158,30 @@ class Contract
                     x_day: {type: 'integer'}
                   }
                 },
-                minValue: {
+                min_value: {
                   type: 'nested',
                   properties: {
                     amount: {type: 'double'},
-                    x_amountEur: {type: 'double'}
+                    x_amount_eur: {type: 'double'}
                   }
                 },
                 value: {
                   type: 'nested',
                   properties: {
                     amount: {type: 'double'},
-                    x_amountEur: {type: 'double'},
+                    x_amount_eur: {type: 'double'},
                     currency: {type: 'string'},
                     x_vat: {type: 'double'},
                     x_vatbool: {type: 'boolean'}
                   }
                 },
-                x_initialValue: {
+                x_initial_value: {
                   type: 'nested',
                   properties: {
                     amount: {type: 'double'},
                     currency: {type: 'string'},
                     x_vat: {type: 'double'},
-                    x_amountEur: {type: 'double'},
+                    x_amount_eur: {type: 'double'},
                     x_vatbool: {type: 'boolean'}
                   }
                 },
@@ -199,8 +199,8 @@ class Contract
   })
 
   def as_json(options={})
-    result = super({:except => [:additionalIdentifiers, :contract_id, :x_lot,
-      :x_additionalInformation, :x_url, :contract_number, :x_NUTS] }.merge(options))
+    result = super({:except => [:additional_identifiers, :contract_id, :x_lot,
+      :x_additional_information, :x_url, :contract_number, :x_NUTS] }.merge(options))
     result[:award] = award.as_json
     result[:suppliers] = suppliers.map{|s| s.as_json}
     result[:procuring_entity] = procuring_entity.as_json

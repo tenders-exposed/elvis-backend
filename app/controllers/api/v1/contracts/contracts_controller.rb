@@ -38,7 +38,7 @@ class Api::V1::Contracts::ContractsController < Api::V1::ApiController
   end
 
   def json_collection(results)
-    results.map!{|result| result.as_json.except!("tender","x_euProject",
+    results.map!{|result| result.as_json.except!("tender","x_eu_project",
       "x_framework","x_subcontracted")}
   end
 

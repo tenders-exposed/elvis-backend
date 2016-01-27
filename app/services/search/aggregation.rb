@@ -6,7 +6,8 @@ class Search::Aggregation
     @embedded_agg = options[:embedded_agg] ? options[:embedded_agg] : nil
     @chained_agg = options[:chained_agg] ? options[:chained_agg].agg : nil
     @type = options[:type] ? options[:type].to_sym : :terms
-    @agg_options = options.except(:type, :chained_agg, :embedded_agg).reverse_merge(default_options)
+    general_options = options.except(:type, :chained_agg, :embedded_agg)
+    @agg_options = general_options.reverse_merge(default_options)
     @name = field_name(field)
     @agg =  { aggs: {} }
     build_aggregation
@@ -31,7 +32,8 @@ class Search::Aggregation
     normal_aggregation[@name][@type].merge!(@agg_options)
     if @embedded_agg
       same_path = (@embedded_agg.collection_name == collection_name)
-      agg = same_path ? @embedded_agg.agg[:aggs][@embedded_agg.collection_name][:aggs] : reverse_nested_aggregation
+      same_path_agg = @embedded_agg.agg[:aggs][@embedded_agg.collection_name][:aggs]
+      agg = same_path ? same_path_agg : reverse_nested_aggregation
       if is_metric?(@type)
         normal_aggregation.merge!(agg)
       else
@@ -96,8 +98,9 @@ class Search::Aggregation
   end
 
   def is_metric? type
-    metric_types = [:avg, :cardinality, :extended_stats, :geo_bounds, :geo_cetroid, :value_count,
-      :max, :min, :percentiles, :percentile_ranks, :scripted_metric, :stats, :sum, :top_hits]
+    metric_types = [:avg, :cardinality, :extended_stats, :geo_bounds,
+      :geo_cetroid, :value_count, :max, :min, :percentiles, :percentile_ranks,
+      :scripted_metric, :stats, :sum, :top_hits]
     metric_types.include?(type.to_sym)
   end
 end
