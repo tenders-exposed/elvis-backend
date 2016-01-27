@@ -15,10 +15,10 @@ class Api::V1::Contracts::ProcuringEntitiesController < Api::V1::ApiController
 
   def get_procuring_entity_details
     details = []
-     procuring_entities_params[:procuring_entities].each do |slug_id|
+     procuring_entities_params[:procuring_entities].each do |x_slug_id|
       query = Search::Query.new( procuring_entities_params.except(:procuring_entities),
-       procuring_entities: [slug_id] )
-      details << Search::ActorDetails.new(query, slug_id, "procuring_entity").details
+       procuring_entities: [x_slug_id] )
+      details << Search::ActorDetails.new(query, x_slug_id, "procuring_entity").details
     end
     details
   end

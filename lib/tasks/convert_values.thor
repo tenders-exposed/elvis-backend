@@ -8,7 +8,7 @@ class ConvertValues < Thor
         value = doc.award.value
         date = doc.award.date
         full_date = convert_date(date.x_year, date.x_month, date.x_day)
-        if value.amount > 0.0 && value.x_amountEur == 0.0
+        if value.amount > 0.0 && value.x_amount_eur == 0.0
           if full_date
             currency = third_party_request(full_date, value.currency)
             value_euro = currency * value.amount
@@ -16,7 +16,7 @@ class ConvertValues < Thor
             currency = aprox_conv_rates[date.x_year.to_s][value.currency].to_f
             value_euro = currency * value.amount
           end
-          doc.award.value.update_attributes!({x_amountEur: value_euro})
+          doc.award.value.update_attributes!({x_amount_eur: value_euro})
         end
     end
   end
