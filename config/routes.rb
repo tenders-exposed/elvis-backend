@@ -8,7 +8,6 @@ Rails.application.routes.draw do
     namespace :api do
       namespace :v1 do
 
-
         resources :users, only: [:show]
         resources :networks, only: [:create, :index, :show, :update]
 
@@ -33,6 +32,7 @@ Rails.application.routes.draw do
     get "/404" => "errors#not_found"
     get "/500" => "errors#internal_server_error"
     get "/422" => "errors#unprocessible_entity"
+    get "/401" => "errors#unauthorized"
   end
 
 end
