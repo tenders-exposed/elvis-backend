@@ -1,6 +1,6 @@
 GIT
-  remote: git@github.com:nateware/redis-objects.git
-  revision: bc79504d45354761ce9b702ed078f7593db8748c
+  remote: https://github.com/nateware/redis-objects.git
+  revision: e4dc872b73dbdb64c0a99b1730d5405c5e11f35e
   specs:
     redis-objects (1.2.1)
       redis (>= 3.0.2)
@@ -143,6 +143,7 @@ GEM
       pry (>= 0.9.10)
     puma (2.15.3)
     rack (1.6.4)
+    rack-cors (0.4.0)
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (4.2.0)
@@ -227,6 +228,7 @@ DEPENDENCIES
   omniauth
   pry-rails
   puma
+  rack-cors
   rails (= 4.2.0)
   rails-api
   redis-objects!
