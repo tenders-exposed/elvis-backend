@@ -143,6 +143,7 @@ GEM
       pry (>= 0.9.10)
     puma (2.15.3)
     rack (1.6.4)
+    rack-cors (0.4.0)
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (4.2.0)
@@ -227,6 +228,7 @@ DEPENDENCIES
   omniauth
   pry-rails
   puma
+  rack-cors
   rails (= 4.2.0)
   rails-api
   redis-objects!
@@ -237,4 +239,4 @@ DEPENDENCIES
   yajl-ruby
 
 BUNDLED WITH
-   1.10.6
+   1.11.2
