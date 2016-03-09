@@ -12,12 +12,12 @@ Rails.application.routes.draw do
         resources :networks, only: [:create, :index, :show, :update]
 
         namespace :contracts do
-          get '/', to: 'contracts#index'
-          get 'count', to: 'contracts#count'
+          post '/', to: 'contracts#index'
+          post 'count', to: 'contracts#count'
           # Suppliers details in the context of a network
           get 'suppliers_details', to: 'suppliers#details'
           # Procuring Entities in the context of a network
-          get 'procuring_entities_details', to: 'procuring_entities#details'
+          post 'procuring_entities_details', to: 'procuring_entities#details'
           # All countries in the contracts
           get 'countries', to: 'countries#index'
           # Query cpvs for autocompletion

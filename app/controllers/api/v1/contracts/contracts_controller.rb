@@ -30,7 +30,8 @@ class Api::V1::Contracts::ContractsController < Api::V1::ApiController
 
 
   def contract_params
-    params.permit(countries: [], cpvs: [], years: [], procuring_entities: [], suppliers:[])
+    params.permit(:id, query: [countries: [], cpvs:[], years: [],
+      procuring_entities: [], suppliers: []]).fetch(:query)
   end
 
   def query
