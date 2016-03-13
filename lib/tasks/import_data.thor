@@ -287,7 +287,7 @@ no_commands{
     Address.with(ordered: false).collection.insert_many(@addresses.map(&:as_document))
   end
 
-  :# TODO: Support >= 100
+  # TODO: Support >= 100
   def string_to_number(string)
     integer = string.to_i
     if integer == 0

@@ -31,11 +31,11 @@ class Api::V1::Contracts::ContractsController < Api::V1::ApiController
 
   def contract_params
     params.permit(:id, query: [countries: [], cpvs:[], years: [],
-      procuring_entities: [], suppliers: []]).fetch(:query)
+      procuring_entities: [], suppliers: []])
   end
 
   def query
-    Search::Query.new(contract_params)
+    Search::Query.new(contract_params.fetch(:query, {}))
   end
 
   def json_collection(results)

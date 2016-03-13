@@ -39,22 +39,18 @@ class Api::V1::NetworksController < Api::V1::ApiController
   end
 
   def network_params
-    # params.permit(:id, :name, :description,:nodes, :edges,countries: [], cpvs: [],
-    #  years: [], procuring_entities: [], suppliers:[]).tap do |whitelisted|
-    #   whitelisted[:graph] = params[:graph] if params[:graph]
-    # end
-    params.permit(:id, :name, :description, options: [:nodes, :edges], query: [countries: [], cpvs:[], years: [],
+    params.require(:network).permit(:id, :name, :description, options: [:nodes, :edges], query: [countries: [], cpvs:[], years: [],
       procuring_entities: [], suppliers: []], graph: [ nodes: [], edges: []] )
   end
 
   private
 
   def query_params
-    network_params.fetch[:query]
+    network_params.fetch(:query, {})
   end
 
   def graph_options
-    network_params.fetch[:options]
+    network_params.fetch(:options, {})
   end
 
   def query
