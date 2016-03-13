@@ -27,6 +27,7 @@ class Contract
   field :x_url, type: String
   field :contract_number, type: String
 
+  accepts_nested_attributes_for :procuring_entity, :suppliers
 
   # Mappings
   elasticsearch!({
@@ -44,7 +45,7 @@ class Contract
         contract: {
           properties: {
             number_of_tenderers: {
-              type: 'integer',
+              type: 'string',
               index: 'not_analyzed'
             },
             contract_id: {

@@ -21,7 +21,7 @@ class ImportData < Thor
                 x_NUTS: row[:location_nuts],
                 x_url: row[:doc_url],
                 x_lot: row[:lot_number],
-                number_of_tenderers: row[:offers_received_num],
+                number_of_tenderers: row[:offers_received_num].downcase,
                 contract_number: row[:contract_number],
                 x_additional_information: row[:additional_information]
         )
@@ -115,7 +115,7 @@ class ImportData < Thor
                 x_NUTS: row[:NUTS],
                 x_url: row[:url],
                 x_lot: row[:lot],
-                number_of_tenderers: row[:nr_bids],
+                number_of_tenderers: row[:nr_bids].downcase,
                 x_additional_information: row[:additional_info]
               )
         @contracts << doc
@@ -200,7 +200,7 @@ class ImportData < Thor
                 x_subcontracted: row[:x_subcontracted],
                 x_framework: row[:x_framework],
                 x_NUTS: row[:x_nuts],
-                number_of_tenderers: row[:numberoftenderers],
+                number_of_tenderers: row[:numberoftenderers].downcase,
                 x_additional_information: row[:x_additionalinformation]
               )
         @contracts << doc
