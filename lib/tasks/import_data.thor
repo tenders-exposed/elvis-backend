@@ -21,7 +21,7 @@ class ImportData < Thor
                 x_NUTS: row[:location_nuts],
                 x_url: row[:doc_url],
                 x_lot: row[:lot_number],
-                number_of_tenderers: row[:offers_received_num].downcase,
+                number_of_tenderers: string_to_number(row[:offers_received_num]),
                 contract_number: row[:contract_number],
                 x_additional_information: row[:additional_information]
         )
@@ -115,7 +115,7 @@ class ImportData < Thor
                 x_NUTS: row[:NUTS],
                 x_url: row[:url],
                 x_lot: row[:lot],
-                number_of_tenderers: row[:nr_bids].downcase,
+                number_of_tenderers: string_to_number(row[:nr_bids]),
                 x_additional_information: row[:additional_info]
               )
         @contracts << doc
@@ -200,7 +200,7 @@ class ImportData < Thor
                 x_subcontracted: row[:x_subcontracted],
                 x_framework: row[:x_framework],
                 x_NUTS: row[:x_nuts],
-                number_of_tenderers: row[:numberoftenderers].downcase,
+                number_of_tenderers: string_to_number(row[:numberoftenderers]),
                 x_additional_information: row[:x_additionalinformation]
               )
         @contracts << doc
@@ -285,6 +285,26 @@ no_commands{
     Tender.with(ordered: false).collection.insert_many(@tenders.map(&:as_document))
     Supplier.with(ordered: false).collection.insert_many(@suppliers.map(&:as_document))
     Address.with(ordered: false).collection.insert_many(@addresses.map(&:as_document))
+  end
+
+  :# TODO: Support >= 100
+  def string_to_number(string)
+    integer = string.to_i
+    if integer == 0
+      digits = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8,
+                nine:9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fifteen: 15}
+      compound = { fourteen: 14, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19}
+      tens = {twenty: 20, thirty: 30, forty:40, fifty: 55, sixty: 60,seventy: 70,
+              eighty: 80, ninety: 90}
+
+      numbers = tens.map {|word, number| number if string.slice!("#{word}")}.compact
+      if !string.empty?
+        nums = compound.merge(digits).map {|word, number| number if string.slice!("#{word}")}.compact
+        numbers.push(*nums)
+      end
+      return numbers.inject(:+)
+    end
+    return integer
   end
 
 }

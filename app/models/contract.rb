@@ -21,7 +21,7 @@ class Contract
   field :x_eu_project, type: String
   field :x_framework, type: String
   field :x_subcontracted, type: Boolean
-  field :number_of_tenderers, type: String
+  field :number_of_tenderers, type: Integer
   field :x_lot, type: String
   field :x_additional_information, type: String
   field :x_url, type: String
@@ -45,7 +45,7 @@ class Contract
         contract: {
           properties: {
             number_of_tenderers: {
-              type: 'string',
+              type: 'integer',
               index: 'not_analyzed'
             },
             contract_id: {
