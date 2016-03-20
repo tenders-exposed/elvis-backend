@@ -272,41 +272,41 @@ class ImportData < Thor
     end
   end
 
-no_commands{
+  no_commands{
 
-  def initialize_arrays
-    @contracts, @awards, @procuring_entities , @tenders, @suppliers, @addresses = [], [], [], [], [], []
-  end
-
-  def batch_insert
-    Contract.with(ordered: false).collection.insert_many(@contracts.map(&:as_document))
-    Award.with(ordered: false).collection.insert_many(@awards.map(&:as_document))
-    ProcuringEntity.with(ordered: false).collection.insert_many(@procuring_entities.map(&:as_document))
-    Tender.with(ordered: false).collection.insert_many(@tenders.map(&:as_document))
-    Supplier.with(ordered: false).collection.insert_many(@suppliers.map(&:as_document))
-    Address.with(ordered: false).collection.insert_many(@addresses.map(&:as_document))
-  end
-
-  # TODO: Support >= 100
-  def string_to_number(string)
-    if !string return nil
-    integer = string.to_i
-    if integer == 0
-      digits = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8,
-                nine:9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fifteen: 15}
-      compound = { fourteen: 14, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19}
-      tens = {twenty: 20, thirty: 30, forty:40, fifty: 55, sixty: 60,seventy: 70,
-              eighty: 80, ninety: 90}
-
-      numbers = tens.map {|word, number| number if string.slice!("#{word}")}.compact
-      if !string.empty?
-        nums = compound.merge(digits).map {|word, number| number if string.slice!("#{word}")}.compact
-        numbers.push(*nums)
-      end
-      return numbers.inject(:+)
+    def initialize_arrays
+      @contracts, @awards, @procuring_entities , @tenders, @suppliers, @addresses = [], [], [], [], [], []
     end
-    return integer
-  end
 
-}
+    def batch_insert
+      Contract.with(ordered: false).collection.insert_many(@contracts.map(&:as_document))
+      Award.with(ordered: false).collection.insert_many(@awards.map(&:as_document))
+      ProcuringEntity.with(ordered: false).collection.insert_many(@procuring_entities.map(&:as_document))
+      Tender.with(ordered: false).collection.insert_many(@tenders.map(&:as_document))
+      Supplier.with(ordered: false).collection.insert_many(@suppliers.map(&:as_document))
+      Address.with(ordered: false).collection.insert_many(@addresses.map(&:as_document))
+    end
+
+    # TODO: Support >= 100
+    def string_to_number(string)
+      integer = string.to_i
+      if integer == 0 && string
+        digits = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8,
+                  nine:9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fifteen: 15}
+        compound = { fourteen: 14, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19}
+        tens = {twenty: 20, thirty: 30, forty:40, fifty: 55, sixty: 60,seventy: 70,
+                eighty: 80, ninety: 90}
+
+        numbers = tens.map {|word, number| number if string.slice!("#{word}")}.compact
+        if !string.empty?
+          nums = compound.merge(digits).map {|word, number| number if string.slice!("#{word}")}.compact
+          numbers.push(*nums)
+        end
+        return numbers.inject(:+)
+      end
+      return integer
+    end
+
+  }
+
 end
