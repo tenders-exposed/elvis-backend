@@ -114,7 +114,10 @@ class Vis::Generator
     names = Search::Aggregation.new("#{actor}.name")
     names_by_ids = Search::Aggregation.new("#{actor}.x_slug_id", embedded_agg: names)
     results = get_results(names_by_ids)
-    results.each{|actor| actor[:name] = actor.delete(:results).first[:key]}
+    results.each do |actor|
+      possible_names = actor.delete(:results)
+      actor[:name] = possible_names.empty? ? '' : possible_names.first[:key]
+    end
   end
 
   def node_red_flags(median)
