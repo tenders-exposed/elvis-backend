@@ -287,7 +287,8 @@ class ImportData < Thor
     end
 
     # TODO: Support >= 100
-    def string_to_number(string)
+    def string_to_number(input)
+      string = input.to_s
       integer = string.to_i
       if integer == 0 && string
         digits = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8,
