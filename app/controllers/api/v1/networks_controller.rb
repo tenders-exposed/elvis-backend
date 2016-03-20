@@ -3,7 +3,7 @@ class Api::V1::NetworksController < Api::V1::ApiController
   before_action :authenticate_user!, only: [:create, :index, :update, :show]
 
   def index
-    @networks = current_user.networks.pluck(:_id, :name, :description)
+    @networks = current_user.networks.pluck(:id, :name, :description)
     render json: @networks, status: 200
   end
 
@@ -71,11 +71,12 @@ class Api::V1::NetworksController < Api::V1::ApiController
 
   def read_graph_file
     path = "#{Rails.root}/networks/#{@network.id}.bin"
-    Marshal::load( File.open(path, "rb"){|f| f.read} ).as_json
+    Marshal::load( File.open(path, "rb"){|f| f.read} )
+    # .as_json
   end
 
   def network_with_graph
-    @network.attributes.merge({graph: read_graph_file})
+    @network.as_json.merge({graph: read_graph_file})
   end
 
   def file_name
