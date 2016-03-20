@@ -1,7 +1,6 @@
 class Api::V1::NetworksController < Api::V1::ApiController
   include ContractsCsvExporter
-
-  before_action :authenticate_user!, only: [:create, :index, :update]
+  before_action :authenticate_user!, only: [:create, :index, :update, :show]
 
   def index
     @networks = current_user.networks.pluck(:_id, :name, :description)
@@ -9,8 +8,7 @@ class Api::V1::NetworksController < Api::V1::ApiController
   end
 
   def show
-    # @network = current_user.networks.find(network_params[:id])
-    @network = Network.find(network_params[:id])
+    @network = current_user.networks.find(network_params[:id])
     respond_to do |format|
       format.json { render json: network_with_graph, status: 200 }
       format.csv  { render_csv }
@@ -41,20 +39,18 @@ class Api::V1::NetworksController < Api::V1::ApiController
   end
 
   def network_params
-    params.permit(:id, :name, :description,:nodes, :edges,countries: [], cpvs: [],
-     years: [], procuring_entities: [], suppliers:[]).tap do |whitelisted|
-      whitelisted[:graph] = params[:graph] if params[:graph]
-    end
+    params.require(:network).permit(:id, :name, :description, options: [:nodes, :edges], query: [countries: [], cpvs:[], years: [],
+      procuring_entities: [], suppliers: []], graph: [ nodes: [], edges: []] )
   end
 
   private
 
   def query_params
-    network_params.slice(:cpvs, :years, :procuring_entities, :suppliers, :countries)
+    network_params.fetch(:query, {})
   end
 
   def graph_options
-    network_params.slice(:nodes, :edges)
+    network_params.fetch(:options, {})
   end
 
   def query

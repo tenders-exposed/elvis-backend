@@ -8,6 +8,6 @@ class Value
   field :amount, type: Float
   field :currency, type: String
   field :x_vat, type: Float
-  field :x_amountEur, type: Float
+  field :x_amount_eur, type: Float
   field :x_vatbool, type: String
 end

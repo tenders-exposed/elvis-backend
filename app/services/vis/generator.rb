@@ -44,9 +44,9 @@ class Vis::Generator
 
   def compute_suppliers(field, chained = nil)
     chained_agg = chained ? {chained_agg: chained} : {}
-    median = Search::Aggregation.new('numberOfTenderers',
+    median = Search::Aggregation.new('number_of_tenderers',
      {type: :percentiles}.merge(chained_agg))
-    values_supplier = Search::Aggregation.new('suppliers.slug_id',
+    values_supplier = Search::Aggregation.new('suppliers.x_slug_id',
      embedded_agg: median)
     results = get_results(values_supplier)
     names = get_names("suppliers")
@@ -62,7 +62,7 @@ class Vis::Generator
   end
 
   def compute_procurers(field, embedded = nil)
-    values_entity = Search::Aggregation.new("procuring_entity.slug_id",
+    values_entity = Search::Aggregation.new("procuring_entity.x_slug_id",
      (embedded ? {embedded_agg: embedded} : {}))
     results = get_results(values_entity)
     names = get_names("procuring_entity")
@@ -75,27 +75,27 @@ class Vis::Generator
   end
 
   def compute_edges(field, embedded = nil)
-    same_city_opts = {type: :percentiles, percents: [95]}.merge(
+    x_same_city_opts = {type: :percentiles, percents: [95]}.merge(
      (embedded ? { embedded_agg: embedded } : {}))
-    same_city = Search::Aggregation.new('suppliers.same_city', same_city_opts)
-    val_per_suppliers = Search::Aggregation.new('suppliers.slug_id',
-     embedded_agg: same_city)
-    relations = Search::Aggregation.new('procuring_entity.slug_id',
+    x_same_city = Search::Aggregation.new('suppliers.x_same_city', x_same_city_opts)
+    val_per_suppliers = Search::Aggregation.new('suppliers.x_slug_id',
+     embedded_agg: x_same_city)
+    relations = Search::Aggregation.new('procuring_entity.x_slug_id',
      embedded_agg: val_per_suppliers)
     results = get_results(relations)
     results.map! do |entity|
       entity[:results].map! do |supplier|
         percent = (supplier[:doc_count] * 100.00 ) / entity[:doc_count]
-        same_city = supplier[:values][:"95.0"]
+        x_same_city = supplier[:values][:"95.0"]
         Vis::Edge.new(entity[:key], supplier[:key], supplier[field.to_sym],
-         edge_red_flags(percent, same_city))
+         edge_red_flags(percent, x_same_city))
       end
     end
     @edges.push(*results.flatten)
   end
 
   def award_values_agg
-    Search::Aggregation.new('award.value.x_amountEur', type: :sum)
+    Search::Aggregation.new('award.value.x_amount_eur', type: :sum)
   end
 
   def get_results(agg)
@@ -103,16 +103,16 @@ class Vis::Generator
     Search::AggregationParser.new(response).parse_response
   end
 
-  def edge_red_flags(percent, same_city)
+  def edge_red_flags(percent, x_same_city)
     hash = {}
     hash[:percent_contracts] = percent.round(2) if percent > 50
-    hash[:same_city] = same_city if same_city == 1
+    hash[:x_same_city] = x_same_city if x_same_city == 1
     hash
   end
 
   def get_names(actor)
     names = Search::Aggregation.new("#{actor}.name")
-    names_by_ids = Search::Aggregation.new("#{actor}.slug_id", embedded_agg: names)
+    names_by_ids = Search::Aggregation.new("#{actor}.x_slug_id", embedded_agg: names)
     results = get_results(names_by_ids)
     results.each{|actor| actor[:name] = actor.delete(:results).first[:key]}
   end

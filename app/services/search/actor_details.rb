@@ -1,13 +1,13 @@
 class Search::ActorDetails
 
-  attr_accessor :query, :slug_id, :details
+  attr_accessor :query, :x_slug_id, :details
 
-  def initialize query, slug_id, type
+  def initialize query, x_slug_id, type
     @query = query
-    @slug_id = slug_id.to_i
+    @x_slug_id = x_slug_id.to_i
     @type = type
     @details = {
-      slug_id: slug_id,
+      x_slug_id: x_slug_id,
       name: name,
       total_earnings: total_earnings,
       missing_values: missing_values,
@@ -17,24 +17,24 @@ class Search::ActorDetails
   end
 
   def total_earnings
-    total = Search::Aggregation.new("award.value.x_amountEur", type: :sum)
+    total = Search::Aggregation.new("award.value.x_amount_eur", type: :sum)
     response(total).deep_find("value").round(2)
   end
 
   def missing_values
-    missing = Search::Aggregation.new("award.value.x_amountEur", type: :missing)
+    missing = Search::Aggregation.new("award.value.x_amount_eur", type: :missing)
     response(missing).deep_find('doc_count').round(2)
   end
 
   def median_tenderers
-    median = Search::Aggregation.new('numberOfTenderers', type: :percentiles)
+    median = Search::Aggregation.new('number_of_tenderers', type: :percentiles)
     response(median).deep_find('values')
   end
 
   def contracts_list
-    wanted_fields = [ 'award.title', 'awardCriteria', 'procuring_entity.name',
-      'procuring_entity.slug_id', 'award.value.x_amountEur', 'numberOfTenderers',
-      'suppliers.name', 'suppliers.slug_id']
+    wanted_fields = [ 'award.title', 'award_criteria', 'procuring_entity.name',
+      'procuring_entity.x_slug_id', 'award.value.x_amount_eur', 'number_of_tenderers',
+      'suppliers.name', 'suppliers.x_slug_id']
     request = Search::ContractSearch.new(@query, nil, *wanted_fields)
     contracts = request.request.raw_response['hits']['hits'].map{|c| c['_source']}
   end
@@ -45,7 +45,7 @@ class Search::ActorDetails
   end
 
   def name
-    Contract.find_by("#{@type}.slug_id": @slug_id).suppliers.find_by("slug_id": @slug_id).name
+    Contract.find_by("#{@type}.x_slug_id": @x_slug_id).suppliers.find_by("x_slug_id": @x_slug_id).name
   end
 
 

@@ -19,7 +19,8 @@ gem 'yajl-ruby'
 gem 'omniauth'
 gem 'hashie'
 gem 'simple_token_authentication', '~> 1.0'
-gem 'redis-objects', :git => 'https://github.com/nateware/redis-objects'
+gem 'redis-objects', :git => 'https://github.com/nateware/redis-objects.git'
+gem 'rack-cors', :require => 'rack/cors'
 
 
 group :development do

@@ -10,14 +10,14 @@ class Api::V1::Contracts::SuppliersController < Api::V1::ApiController
   end
 
   def suppliers_params
-    params.permit(suppliers:[], countries: [], cpvs: [], years: [])
+    params.permit(query: [countries: [], cpvs:[], years: [], suppliers: []]).fetch(:query)
   end
 
   def get_supplier_details
     details = []
-     suppliers_params[:suppliers].each do |slug_id|
-      query = Search::Query.new(suppliers_params.except(:suppliers), suppliers: [slug_id])
-      details << Search::ActorDetails.new(query, slug_id, "suppliers").details
+     suppliers_params[:suppliers].each do |x_slug_id|
+      query = Search::Query.new(suppliers_params.except(:suppliers), suppliers: [x_slug_id])
+      details << Search::ActorDetails.new(query, x_slug_id, "suppliers").details
     end
     details
   end

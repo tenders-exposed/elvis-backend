@@ -5,10 +5,10 @@ class Address
   embedded_in :addressable, polymorphic: true
 
   # Fields
-  field :countryName, type: String
+  field :country_name, type: String
   field :locality, type: String
-  field :streetAddress, type: String
-  field :postalCode, type: String
+  field :street_address, type: String
+  field :postal_code, type: String
   field :email, type: String
   field :telephone, type: String
   field :x_url, type: String
