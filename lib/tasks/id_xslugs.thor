@@ -22,7 +22,7 @@ class IdXslugs < Thor
         contract_and_suppliers.each do |contract_id, suppliers|
           suppliers.each_with_index do |supplier_id, index|
             contract = Contract.find(contract_id)
-            contract.update_attributes(suppliers_attributes:  {"#{index}" => {id: supplier_id, x_slug_id: next_index}})
+            contract.update_attributes!(suppliers_attributes:  {"#{index}" => {id: supplier_id, x_slug_id: next_index}})
             next_index += 1
           end
         end
@@ -44,7 +44,7 @@ class IdXslugs < Thor
         contract_and_procurer = nil_contracts.map{|contract| [contract.id, contract.procuring_entity.id]}
         contract_and_procurer.each do |contract_id, procurer_id, |
           contract = Contract.find(contract_id)
-          contract.update_attributes(procuring_entity_attributes: {id: procurer_id, x_slug_id: next_index})
+          contract.update_attributes!(procuring_entity_attributes: {id: procurer_id, x_slug_id: next_index})
           next_index += 1
         end
       end
