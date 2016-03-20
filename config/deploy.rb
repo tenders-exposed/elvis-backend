@@ -9,7 +9,7 @@ require 'mina/rbenv'  # for rbenv support. (http://rbenv.org)
 #   repository   - Git repo to clone from. (needed by mina/git)
 #   branch       - Branch name to deploy. (needed by mina/git)
 
-set :domain, 'speedy.tenders.exposed'
+set :domain, 'db1.tenders.exposed'
 set :deploy_to, '/srv/elvis/production/backend'
 set :repository, 'https://github.com/tenders-exposed/elvis-backend.git'
 set :branch, 'master'
@@ -32,7 +32,10 @@ task :environment do
 end
 
 task :env do
-  queue! %[source ~/.bashrc]
+  queue %{
+    echo "-----> Loading environment"
+    #{echo_cmd %[source ~/.bashrc]}
+  }
 end
 
 # Put any custom mkdir's in here for when `mina setup` is ran.
