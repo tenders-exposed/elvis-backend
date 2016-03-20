@@ -31,6 +31,13 @@ task :environment do
   invoke :'rbenv:load'
 end
 
+task :env do
+  queue %{
+    echo "-----> Loading environment"
+    #{echo_cmd %[source ~/.bashrc]}
+  }
+end
+
 # Put any custom mkdir's in here for when `mina setup` is ran.
 # For Rails apps, we'll make some of the shared paths that are shared between
 # all releases.
@@ -44,6 +51,7 @@ end
 
 desc "Deploys the current version to the server."
 task :deploy => :environment do
+  invoke :env
   to :before_hook do
   end
   deploy do
