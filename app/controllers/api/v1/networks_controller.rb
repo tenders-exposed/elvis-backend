@@ -20,7 +20,8 @@ class Api::V1::NetworksController < Api::V1::ApiController
     graph = graph_elements
     write_graph_file(graph)
     if @network.save!
-      render json: network_with_graph, status: 201
+      # render json: network_with_graph, status: 201
+      render json: @network,  status: 201
     else
       render json: { errors: @network.errors }, status: 422
     end
