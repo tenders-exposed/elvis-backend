@@ -5,11 +5,11 @@ class Vis::Edge
     @from = from
     @to = to
     @value = value
-    @arrows = arrows
+    #@arrows = arrows
     @flags = flags.slice(:percent_contracts, :x_same_city)
   end
 
-  def arrows
-    { middle:{ scaleFactor: 0.5}, from:true}
-  end
+  #def arrows
+  #  { middle:{ scaleFactor: 0.5}, from:true}
+  #end
 end

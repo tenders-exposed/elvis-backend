@@ -7,9 +7,9 @@ class Supplier
 
   # Fields
   field :name, type: String
-  field :x_slug, type: String
-  field :x_slug_id, type: Integer
-  field :x_same_city, type: Integer
+  field :x_slug, type: String, default: nil
+  field :x_slug_id, type: Integer, default: nil
+  field :x_same_city, type: Integer, default: nil
 
   def as_json(options={})
     super({:except => [:address]}.merge(options))

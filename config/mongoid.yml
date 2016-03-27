@@ -57,7 +57,7 @@ development:
         # server_selection_timeout: 30
 
         # The maximum number of connections in the connection pool. (default: 5)
-        # max_pool_size: 5
+        max_pool_size: 25
 
         # The minimum number of connections in the connection pool. (default: 1)
         # min_pool_size: 1
@@ -103,10 +103,10 @@ development:
   # Configure Mongoid specific options. (optional)
   options:
     # Includes the root model name in json serialization. (default: false)
-    # include_root_in_json: false
+    include_root_in_json: true
 
     # Include the _type field in serialization. (default: false)
-    # include_type_for_serialization: false
+    include_type_for_serialization: true
 
     # Preload all models in development, needed when models use
     # inheritance. (default: false)

@@ -3,14 +3,14 @@ class Api::V1::NetworksController < Api::V1::ApiController
   before_action :authenticate_user!, only: [:create, :index, :update, :show]
 
   def index
-    @networks = current_user.networks.pluck(:id, :name, :description)
-    render json: @networks, status: 200
+    @networks = current_user.networks
+    render json: @networks, each_serializer: NetworksSerializer, status: 200
   end
 
   def show
-    @network = current_user.networks.find(network_params[:id])
+    @network = current_user.networks.find(params[:id])
     respond_to do |format|
-      format.json { render json: network_with_graph, status: 200 }
+      format.json { render json: @network, status: 200 }
       format.csv  { render_csv }
     end
   end
@@ -20,19 +20,19 @@ class Api::V1::NetworksController < Api::V1::ApiController
     graph = graph_elements
     write_graph_file(graph)
     if @network.save!
-      render json: network_with_graph, status: 201
+      render json: @network,  status: 201
     else
       render json: { errors: @network.errors }, status: 422
     end
   end
 
   def update
-    @network = current_user.networks.find(network_params[:id])
+    @network = current_user.networks.find(params[:id])
     if @network.update!(name: network_params[:name], description: network_params[:description],
        query: @network.query.merge(query_params), options: @network.options.merge(graph_options))
       write_graph_file(network_params[:graph]) if network_params[:graph]
       write_graph_file(graph_elements) unless query_params.empty? && graph_options.empty?
-      render json: network_with_graph, status: 200
+      render json: @network, status: 200
     else
       render json: {errors: @network.errors}, status: 422
     end
@@ -62,22 +62,13 @@ class Api::V1::NetworksController < Api::V1::ApiController
     Vis::Generator.new(query,@network.options.symbolize_keys).generate_graph_elements
   end
 
+  # TODO: Move this in a before_create
   def write_graph_file(graph)
     path = "#{Rails.root}/networks/#{@network.id}.bin"
     File.delete(path) if File.exist?(path)
     File.open(path, "wb") do |file|
       file << Marshal::dump(graph)
     end
-  end
-
-  def read_graph_file
-    path = "#{Rails.root}/networks/#{@network.id}.bin"
-    Marshal::load( File.open(path, "rb"){|f| f.read} )
-    # .as_json
-  end
-
-  def network_with_graph
-    @network.as_json.merge({graph: read_graph_file})
   end
 
   def file_name
