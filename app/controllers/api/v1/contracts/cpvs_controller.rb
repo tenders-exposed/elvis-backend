@@ -19,12 +19,12 @@ class Api::V1::Contracts::CpvsController < Api::V1::ApiController
   end
 
   def cpv_params
-    params.permit(:code, search: [countries: [], cpvs:[], years: [],
+    params.permit(:code, query: [countries: [], cpvs:[], years: [],
       procuring_entities: [], suppliers: []])
   end
 
   def query
-    Search::Query.new(cpv_params.fetch(:search, {}))
+    Search::Query.new(cpv_params.fetch(:query, {}))
   end
 
 end

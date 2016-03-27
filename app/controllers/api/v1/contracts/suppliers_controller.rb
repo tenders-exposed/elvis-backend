@@ -10,11 +10,11 @@ class Api::V1::Contracts::SuppliersController < Api::V1::ApiController
   end
 
   def suppliers_params
-    params.permit(search: [countries: [], cpvs:[], years: [], suppliers: []])
+    params.permit(query: [countries: [], cpvs:[], years: [], suppliers: []])
   end
 
   def query
-    suppliers_params.fetch(:search, {})
+    suppliers_params.fetch(:query, {})
   end
 
   def get_supplier_details

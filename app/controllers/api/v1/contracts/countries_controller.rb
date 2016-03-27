@@ -12,12 +12,12 @@ class Api::V1::Contracts::CountriesController < Api::V1::ApiController
   end
 
   def country_params
-    params.permit(search: [countries: [], cpvs:[], years: [],
+    params.permit(query: [countries: [], cpvs:[], years: [],
       procuring_entities: [], suppliers: []])
   end
 
   def query
-    Search::Query.new(country_params.fetch(:search, {}))
+    Search::Query.new(country_params.fetch(:query, {}))
   end
 
 end

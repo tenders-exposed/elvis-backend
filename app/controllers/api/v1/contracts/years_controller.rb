@@ -11,12 +11,12 @@ class Api::V1::Contracts::YearsController < Api::V1::ApiController
   end
 
   def year_params
-    params.permit(search: [countries: [], cpvs:[], years: [],
+    params.permit(query: [countries: [], cpvs:[], years: [],
       procuring_entities: [], suppliers: []])
   end
 
   def query
-    Search::Query.new(year_params.fetch(:search, {}))
+    Search::Query.new(year_params.fetch(:query, {}))
   end
 
 end
