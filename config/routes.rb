@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
 
+  require 'sidekiq/web'
+  mount Sidekiq::Web => '/sidekiq'
+
   defaults format: :json do
 
     devise_for :users, path: "api/v1/users", :controllers => {sessions: 'sessions', registrations: 'registrations',
@@ -19,13 +22,15 @@ Rails.application.routes.draw do
           # Procuring Entities in the context of a network
           post 'procuring_entities_details', to: 'procuring_entities#details'
           # All countries in the contracts
-          get 'countries', to: 'countries#index'
+          post 'countries', to: 'countries#index'
+          # All years in the contracts
+          post 'years', to: 'years#index'
           # Query cpvs for autocompletion
-          get 'cpvs/autocomplete', to: 'cpvs#autocomplete'
+          post 'cpvs/autocomplete', to: 'cpvs#autocomplete'
+          # Get all cpvs in the contracts
+          post 'cpvs', to: 'cpvs#index'
           get '/:id', to: 'contracts#show'
         end
-
-
       end
     end
 

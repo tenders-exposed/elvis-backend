@@ -2,6 +2,7 @@ class Search::CpvSearch
   require 'elasticsearch'
 
   attr_accessor :client, :list
+  
   def initialize
     @client = Elasticsearch::Client.new(log: true)
   end
