@@ -15,7 +15,7 @@ gem 'smarter_csv', '~>1.1.0'
 gem 'mongoid', '~> 5.0.0'
 gem 'mongoid-elasticsearch', '~>0.9.0'
 gem 'active_model_serializers'
-gem 'sidekiq'
+gem 'sidekiq', '4.0.0'
 gem 'yajl-ruby'
 gem 'omniauth'
 gem 'hashie'
@@ -23,6 +23,9 @@ gem 'simple_token_authentication', '~> 1.0'
 gem 'redis-objects', :git => 'https://github.com/nateware/redis-objects.git'
 gem 'rack-cors', :require => 'rack/cors'
 gem 'unicorn'
+
+# For sidekiq UI
+gem 'sinatra', :require => nil
 
 
 group :development do
