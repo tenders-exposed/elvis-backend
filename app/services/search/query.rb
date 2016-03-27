@@ -21,20 +21,29 @@ class Search::Query
   def build_query *options
     params = options.extract_options!.stringify_keys!
     params.each do |field, value|
-      @filters << create_filter(FIELDS[field], value)
+      if field == 'cpvs'
+        value.each do |cpv_prefix|
+          @filters << create_filter(FIELDS[field], cpv_prefix, 'prefix_query')
+        end
+      else
+        @filters << filter_query = create_filter(FIELDS[field], value)
+      end
     end
   end
 
-  def create_filter field, value
-    terms_query = terms_query(field, value)
-    return terms_query unless nested?(field)
+  def create_filter field, value, query_type='terms_query'
+    if !self.respond_to?(query_type.to_sym)
+      raise NotImplementedError.new("#{query_type} query is not implemented yet.")
+    end
+    query = self.method(query_type.to_sym).call(field, value)
+    return query unless nested?(field)
     subject = get_nested(field)
-    query = nested_query(subject, bool_query(Array.new().push(terms_query)))
+    complete_query = nested_query(subject, bool_query(Array.new().push(query)))
     # If the field is deeply nested, place the query in another nested query
     if nested?(subject)
-      return nested_query(get_nested(subject), query)
+      return nested_query(get_nested(subject), complete_query)
     else
-      return query
+      return complete_query
     end
   end
 
@@ -51,8 +60,12 @@ class Search::Query
     return { terms: {field =>  value, execution: "bool", _cache: true} }
   end
 
+  def prefix_query field, value
+    return { prefix: { field => value, _cache: true } }
+  end
+
   def bool_query filters
-    return { bool: { must: filters } }
+    return { bool: { filter: filters } }
   end
 
   def nested? field
