@@ -65,7 +65,7 @@ class Search::Query
   end
 
   def bool_query filters
-    return { bool: { filter: filters } }
+    return { bool: { should: filters } }
   end
 
   def nested? field
