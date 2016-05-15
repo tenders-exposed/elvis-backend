@@ -34,7 +34,7 @@ Rails.application.routes.draw do
       end
     end
 
-    get "/status" => "status#ok"
+    get "/ping" => "info#ping"
 
     get "/404" => "errors#not_found"
     get "/500" => "errors#internal_server_error"
