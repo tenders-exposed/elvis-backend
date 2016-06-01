@@ -22,7 +22,6 @@ gem 'hashie'
 gem 'simple_token_authentication', '~> 1.0'
 gem 'redis-objects', :git => 'https://github.com/nateware/redis-objects.git'
 gem 'rack-cors', :require => 'rack/cors'
-gem 'unicorn'
 
 # For sidekiq UI
 gem 'sinatra', :require => nil
@@ -31,4 +30,12 @@ gem 'sinatra', :require => nil
 group :development do
   gem 'byebug'
   gem 'pry-rails'
+end
+
+group :staging do
+  gem 'puma'
+end
+
+group :production do
+  gem 'unicorn'
 end
