@@ -1,3 +1,4 @@
+require 'mina/multistage'
 require 'mina/bundler'
 require 'mina/rails'
 require 'mina/git'
@@ -9,10 +10,6 @@ require 'mina/rbenv'  # for rbenv support. (http://rbenv.org)
 #   repository   - Git repo to clone from. (needed by mina/git)
 #   branch       - Branch name to deploy. (needed by mina/git)
 
-set :domain, '51.255.66.26'
-set :deploy_to, '/srv/elvis/production/backend'
-set :repository, 'https://github.com/tenders-exposed/elvis-backend.git'
-set :branch, 'master'
 set :term_mode, nil
 
 
@@ -22,7 +19,6 @@ set :shared_paths, ['config/application.yml', 'log']
 
 # Optional settings:
   set :user, 'elvis'    # Username in the server to SSH to.
-# set :port, '3248'     # SSH port number.
   set :forward_agent, true     # SSH forward_agent.
 
 # This task is the environment that is loaded for most commands, such as

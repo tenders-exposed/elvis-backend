@@ -1,0 +1,6 @@
+set :domain, 'db1.tenders.exposed'
+set :deploy_to, '/srv/elvis/production/backend'
+set :repository, 'https://github.com/tenders-exposed/elvis-backend.git'
+set :branch, 'master'
+set :user, 'elvis'
+set :rails_env, 'production'

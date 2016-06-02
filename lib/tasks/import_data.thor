@@ -28,9 +28,9 @@ class ImportData < Thor
         @contracts << doc
         @awards << doc.build_award(
                       date: {
-                        x_year:  row[:contract_award_year].to_i,
-                        x_month: row[:contract_award_month].to_i,
-                        x_day:   row[:contract_award_day].to_i
+                        x_year:  valid_year(row[:contract_award_year]),
+                        x_month: valid_month(row[:contract_award_month]),
+                        x_day: valid_day(row[:contract_award_day], row[:contract_award_month], row[:contract_award_year])
                       },
                       x_initial_value: {
                         x_amount_eur: row[:initial_value_cost_eur].to_f,
@@ -121,9 +121,9 @@ class ImportData < Thor
         @contracts << doc
         @awards <<  doc.build_award(
                       date: {
-                        x_year:  row[:contract_award_year].to_i,
-                        x_month: row[:contract_award_month].to_i,
-                        x_day:   row[:contract_award_day].to_i
+                        x_year:  valid_year(row[:contract_award_year]),
+                        x_month: valid_month(row[:contract_award_month]),
+                        x_day: valid_day(row[:contract_award_day], row[:contract_award_month], row[:contract_award_year])
                       },
                       value: {
                         amount:   row[:contract_value].to_f,
@@ -205,9 +205,9 @@ class ImportData < Thor
         @contracts << doc
         @awards <<  doc.build_award(
                       date: {
-                        x_year:  row[:"award.date/x_year"].to_i,
-                        x_month: row[:"award.date/x_month"].to_i,
-                        x_day:   row[:"award.date/x_day"].to_i
+                        x_year:  valid_year(row[:contract_award_year]),
+                        x_month: valid_month(row[:contract_award_month]),
+                        x_day: valid_day(row[:contract_award_day], row[:contract_award_month], row[:contract_award_year])
                       },
                       value: {
                         amount:   row[:"award.value/amount"].to_f,
@@ -305,6 +305,26 @@ class ImportData < Thor
         return numbers.inject(:+)
       end
       return integer
+    end
+
+    def valid_year(year)
+      year = year.to_i
+      return (1990..Time.now.year).include?(year) ? year : nil
+    end
+
+    def valid_month(month)
+      month = month.to_i
+      return (1..12).include?(month) ? month : nil
+    end
+
+    def valid_day(day, month, year)
+      day, month, year = [day.to_i, month.to_i, year.to_i]
+      number_or_days = Time.days_in_month(month,year)
+      if number_or_days
+        return (1..number_or_days).include?(day) ? day : nil
+      else
+        return nil
+      end
     end
 
   }

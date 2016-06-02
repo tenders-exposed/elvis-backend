@@ -1,3 +1,5 @@
+[![Stories in Ready](https://badge.waffle.io/tenders-exposed/elvis-backend.png?label=ready&title=Ready)](http://waffle.io/tenders-exposed/elvis-backend)
+
 
 Elvis is a tool that enables investivative journalists to analyze and visualize public procurements data and look for patterns that suggest corrupt behavior in public spending. 
 

@@ -18,7 +18,7 @@ Rails.application.routes.draw do
           post '/', to: 'contracts#index'
           post 'count', to: 'contracts#count'
           # Suppliers details in the context of a network
-          get 'suppliers_details', to: 'suppliers#details'
+          post 'suppliers_details', to: 'suppliers#details'
           # Procuring Entities in the context of a network
           post 'procuring_entities_details', to: 'procuring_entities#details'
           # All countries in the contracts
@@ -34,7 +34,7 @@ Rails.application.routes.draw do
       end
     end
 
-    get "/status" => "status#ok"
+    get "/ping" => "info#ping"
 
     get "/404" => "errors#not_found"
     get "/500" => "errors#internal_server_error"

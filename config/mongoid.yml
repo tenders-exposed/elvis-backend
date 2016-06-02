@@ -136,6 +136,16 @@ test:
           mode: :primary
         max_pool_size: 1
 
+staging:
+  clients:
+    default:
+      database: elvis_staging
+      hosts:
+        - localhost:27017
+      options:
+        use_utc: true
+        raise_not_found_error: false
+
 production:
   clients:
     default:

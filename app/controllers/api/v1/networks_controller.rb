@@ -1,6 +1,6 @@
 class Api::V1::NetworksController < Api::V1::ApiController
   include ContractsCsvExporter
-  before_action :authenticate_user!, only: [:create, :index, :update, :show]
+  before_action :authenticate_user!, only: [:create, :update, :index]
 
   def index
     @networks = current_user.networks
@@ -8,7 +8,7 @@ class Api::V1::NetworksController < Api::V1::ApiController
   end
 
   def show
-    @network = current_user.networks.find(params[:id])
+    @network = Network.find(params[:id])
     respond_to do |format|
       format.json { render json: @network, status: 200 }
       format.csv  { render_csv }
