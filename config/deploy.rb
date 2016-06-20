@@ -14,7 +14,7 @@ set :shared_paths, ['config/application.yml', 'log']
 # Optional settings:
   set :user, 'elvis'    # Username in the server to SSH to.
   set :forward_agent, true     # SSH forward_agent.
-  set :port, 443
+  set :port, 22
 
 # This task is the environment that is loaded for most commands, such as
 # `mina deploy` or `mina rake`.
