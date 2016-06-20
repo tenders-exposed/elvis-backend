@@ -8,7 +8,7 @@ class ConvertValues < Thor
         value = doc.award.value
         date = doc.award.date
         full_date = convert_date(date.x_year, date.x_month, date.x_day)
-        if value.amount > 0.0 && value.x_amount_eur == 0.0 && date.x_year != 0
+        if value.amount > 0.0 && value.x_amount_eur == 0.0 && date.x_year != nil
           if full_date
             currency = third_party_request(full_date, value.currency)
             value_euro = currency * value.amount
@@ -30,7 +30,7 @@ class ConvertValues < Thor
     end
 
     def convert_date year, month, day
-      if (year && month && day) != 0
+      if (year && month && day) != nil
         m = month < 10 ? month.to_s.prepend('0') : month.to_s
         d = day < 10 ? day.to_s.prepend('0') : day.to_s
         date = [year.to_s, m, d].join('-')
