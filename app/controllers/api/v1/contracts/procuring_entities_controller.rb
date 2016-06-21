@@ -3,7 +3,7 @@ class Api::V1::Contracts::ProcuringEntitiesController < Api::V1::ApiController
 
   def details
     details = get_procuring_entity_details
-    render json: search_json_response(count: query[:procuring_entities].size,
+    render json: search_json_response(count: query.fetch(:procuring_entities, []).size,
      results: details), status: 200
   rescue => e
       render_error(e.message)
@@ -19,10 +19,10 @@ class Api::V1::Contracts::ProcuringEntitiesController < Api::V1::ApiController
 
   def get_procuring_entity_details
     details = []
-    query[:procuring_entities].each do |x_slug_id|
-      query = Search::Query.new( query.except(:procuring_entities),
+    query.fetch(:procuring_entities, []).each do |x_slug_id|
+      query_object = Search::Query.new(query.except(:procuring_entities),
        procuring_entities: [x_slug_id] )
-      details << Search::ActorDetails.new(query, x_slug_id, "procuring_entity").details
+      details << Search::ActorDetails.new(query_object, x_slug_id, "procuring_entity").details
     end
     details
   end

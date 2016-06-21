@@ -45,7 +45,11 @@ class Search::ActorDetails
   end
 
   def name
-    Contract.find_by("#{@type}.x_slug_id": @x_slug_id).suppliers.find_by("x_slug_id": @x_slug_id).name
+    if @type == 'suppliers'
+      Contract.find_by("suppliers.x_slug_id": @x_slug_id).suppliers.find_by("x_slug_id": @x_slug_id).name
+    else
+      Contract.find_by("procuring_entity.x_slug_id": 1).procuring_entity.name
+    end
   end
 
 
