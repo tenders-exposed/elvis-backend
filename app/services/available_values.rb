@@ -43,11 +43,16 @@ module AvailableValues
       cpvs = get_name_from_redis('cpvs')
       cpvs.each do |cpv|
         cpv[:text] = cpv.delete(:title)
-        order = cpv[:id].match('0*$')[0].length + 1
-        cpv_root = cpv[:id].to_i / (10 ** order)
-        parent_cpv = cpv_root * 10 ** order
-        cpv[:parent]  = parent_cpv > 0 ? parent_cpv.to_s : '#'
+        no_zeros = cpv[:id].match('0*$')[0].length + 1
+        cpv_root = cpv[:id].to_i / (10 ** no_zeros)
+        parent_cpv = cpv_root * 10 ** no_zeros
+        cpv[:parent]  = parent_cpv.to_s
       end
+      cpvs.group_by{|cpv| cpv[:id][0]}.each do |category, group|
+        root_cpv = group.min_by{|cpv| cpv[:id]}
+        root_cpv[:parent] = '#'
+      end
+      return cpvs
     end
 
   end
