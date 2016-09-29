@@ -16,7 +16,7 @@ class Search::ContractSearch
   def search(from = 0, size = self.count)
     @request[:from] = from
     @request[:size] = size
-    @request[:body][:script_fields]= { "ids": { "script": { file: "get_ids" } } }
+    @request[:body][:script_fields]= { "ids": { "script": { inline: "doc['_id']", lang: "groovy" } } }
     ids = request.raw_response["hits"]["hits"].map{|result| result["_id"]}
     Contract.any_in(id: ids)
   rescue => e
