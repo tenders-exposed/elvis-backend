@@ -42,6 +42,7 @@ module AvailableValues
     def with_name
       cpvs = get_name_from_redis('cpvs')
       cpvs.each do |cpv|
+        cpv[:text] = cpv.delete(:title)
         order = cpv[:id].match('0*$')[0].length + 1
         cpv_root = cpv[:id].to_i / (10 ** order)
         parent_cpv = cpv_root * 10 ** order
