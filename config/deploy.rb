@@ -9,12 +9,12 @@ set :term_mode, nil
 
 # Manually create these paths in shared/ (eg: shared/config/database.yml) in your server.
 # They will be linked in the 'deploy:link_shared_paths' step.
-set :shared_paths, ['config/application.yml', 'log']
+set :shared_paths, ['config/application.yml', 'log', 'networks']
 
 # Optional settings:
   set :user, 'elvis'    # Username in the server to SSH to.
   set :forward_agent, true     # SSH forward_agent.
-  set :port, 443
+  set :port, 22
 
 # This task is the environment that is loaded for most commands, such as
 # `mina deploy` or `mina rake`.
@@ -38,6 +38,9 @@ task :setup => :environment do
 
   queue! %[mkdir -p "#{deploy_to}/#{shared_path}/config"]
   queue! %[chmod g+rx,u+rwx "#{deploy_to}/#{shared_path}/config"]
+
+  queue! %[mkdir -p "#{deploy_to}/#{shared_path}/networks"]
+  queue! %[chmod g+rx,u+rwx "#{deploy_to}/#{shared_path}/networks"]
 end
 
 desc "Deploys the current version to the server."
