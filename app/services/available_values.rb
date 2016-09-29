@@ -11,7 +11,10 @@ module AvailableValues
 
     def get_name_from_redis(collection)
       store = Redis::HashKey.new(collection)
-      @available_values.each{|hash| hash[:name] = store.get(hash[:key])}
+      @available_values.each do |hash|
+         hash[:title] = store.get(hash[:key])
+         hash[:id] = hash.delete(:key)
+      end
     end
 
   end
@@ -37,9 +40,15 @@ module AvailableValues
     end
 
     def with_name
-      get_name_from_redis('cpvs')
+      cpvs = get_name_from_redis('cpvs')
+      cpvs.each do |cpv|
+        order = cpv[:id].match('0*$')[0].length + 1
+        cpv_root = cpv[:id].to_i / (10 ** order)
+        parent_cpv = cpv_root * 10 ** order
+        cpv[:parent]  = parent_cpv > 0 ? parent_cpv.to_s : '#'
+      end
     end
-    
+
   end
 
   class AvailableYears  < AvailableValuesBase

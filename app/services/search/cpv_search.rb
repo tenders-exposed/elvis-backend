@@ -2,7 +2,7 @@ class Search::CpvSearch
   require 'elasticsearch'
 
   attr_accessor :client, :list
-  
+
   def initialize
     @client = Elasticsearch::Client.new(log: true)
   end
@@ -23,7 +23,7 @@ class Search::CpvSearch
         functions: [
             {
               script_score: {
-                 script: {lang:"groovy", file:"boost_by_category"}
+                 script: {lang:"groovy", inline: "_score - (1 * doc.NUM_DIGITS / 100000.00)"}
               }
             }
           ]
