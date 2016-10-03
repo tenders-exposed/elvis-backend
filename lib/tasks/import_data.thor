@@ -6,7 +6,7 @@ class ImportData < Thor
 
   desc "import_ted_csv FILE", "Import data from the TED csvs"
   def import_ted_csv(filename)
-    opts= { :chunk_size => 100, :row_sep => "\n"}
+    opts= { chunk_size: 100, row_sep: "\n", convert_values_to_numeric: {except: [:cpv_code]} }
     SmarterCSV.process(filename, opts) do |chunk|
       initialize_arrays
       chunk.each do |row|
@@ -98,7 +98,7 @@ class ImportData < Thor
 
   desc "import_2011_csv FILE", "Import data from the TED csvs"
   def import_2011_csv(filename)
-    opts= { :chunk_size => 50, :row_sep => "\n"}
+    opts= { :chunk_size => 50, :row_sep => "\n", convert_values_to_numeric: {except: [:cpv]}}
     SmarterCSV.process(filename, opts) do |chunk|
       initialize_arrays
       chunk.each do |row|
@@ -186,7 +186,7 @@ class ImportData < Thor
 
   desc "import_2008_csv FILE", "Import data from the TED csvs"
   def import_2008_csv(filename)
-    opts= { :chunk_size => 50, :row_sep => "\n"}
+    opts= { :chunk_size => 50, :row_sep => "\n", convert_values_to_numeric: {except: [:x_cpv]}}
     SmarterCSV.process(filename, opts) do |chunk|
       initialize_arrays
       chunk.each do |row|
