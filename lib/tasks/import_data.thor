@@ -11,7 +11,6 @@ class ImportData < Thor
       initialize_arrays
       chunk.each do |row|
         row.each{ |key,val| row[key] = val.is_a?(String) ? val.try(:erase_html) : val }
-        p row
         doc =  Contract.new(
                 contract_id: row[:doc_no].try(:erase_html),
                 additional_identifiers: row[:file_reference],
