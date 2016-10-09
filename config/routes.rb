@@ -25,8 +25,6 @@ Rails.application.routes.draw do
           post 'countries', to: 'countries#index'
           # All years in the contracts
           post 'years', to: 'years#index'
-          # Query cpvs for autocompletion
-          post 'cpvs/autocomplete', to: 'cpvs#autocomplete'
           # Get all cpvs in the contracts
           post 'cpvs', to: 'cpvs#index'
           get '/:id', to: 'contracts#show'
