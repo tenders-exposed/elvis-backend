@@ -12,7 +12,7 @@ module AvailableValues
     def get_name_from_redis(collection)
       store = Redis::HashKey.new(collection)
       @available_values.each do |hash|
-         hash[:title] = store.get(hash[:key])
+         hash[:text] = store.get(hash[:key])
          hash[:id] = hash.delete(:key)
       end
     end
@@ -41,13 +41,6 @@ module AvailableValues
 
     def with_name
       cpvs = get_name_from_redis('cpvs')
-      cpvs.each do |cpv|
-        cpv[:text] = cpv.delete(:title)
-        order = cpv[:id].match('0*$')[0].length + 1
-        cpv_root = cpv[:id].to_i / (10 ** order)
-        parent_cpv = cpv_root * 10 ** order
-        cpv[:parent]  = parent_cpv > 0 ? parent_cpv.to_s : '#'
-      end
     end
 
   end
@@ -57,6 +50,10 @@ module AvailableValues
     def initialize(query)
       agg = Search::Aggregation.new("award.date.x_year")
       super(query, agg)
+    end
+
+    def with_name
+      @available_values.each{|year| year[:id] = year.delete(:key)}
     end
 
   end
