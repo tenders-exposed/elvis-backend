@@ -13,6 +13,7 @@ Rails.application.routes.draw do
 
         resources :users, only: [:show]
         resources :networks, only: [:create, :index, :show, :update]
+        resources :cpvs, only: [:index]
 
         namespace :contracts do
           post '/', to: 'contracts#index'
