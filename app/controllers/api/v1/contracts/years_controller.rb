@@ -3,7 +3,7 @@ class Api::V1::Contracts::YearsController < Api::V1::ApiController
   include AvailableValues
 
   def index
-    years = AvailableValues::AvailableYears.new(query).available_values
+    years = AvailableValues::AvailableYears.new(query).with_name
     render json: search_json_response(count: years.size, results: years),
                  status: 200
   rescue => e
