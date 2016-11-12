@@ -1,0 +1,55 @@
+version: '2'
+services:
+  db:
+    image: jadsonlourenco/mongo-rocks
+    ports: 
+      - "27017:27017"
+    expose:
+      - "27017"
+  es:
+    image: elasticsearch:2.0
+    ports: 
+      - "9200:9200"
+    expose:
+      - "9200"
+  redis:
+    image: redis
+    ports: 
+      - "6379:6379"
+    expose:
+      - "6379"
+  sidekiq:
+    build: .
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    ports: 
+      - "9494:9494"
+    expose:
+      - "9494"
+    links:
+      - db
+      - redis
+    volumes:
+      - .:/elvis
+    environment:
+      - RAILS_ENV=production
+      - RACK_ENV=production
+  api:
+    build: .
+    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    volumes:
+      - .:/elvis
+    environment:
+      - RAILS_ENV=production
+      - RACK_ENV=production
+    ports:
+      - "3000:3000"
+    depends_on:
+      - es
+      - db
+      - redis
+      - sidekiq
+    links:
+      - es
+      - db
+      - redis
+      - sidekiq
