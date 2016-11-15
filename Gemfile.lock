@@ -229,6 +229,3 @@ DEPENDENCIES
   smarter_csv (~> 1.1.0)
   spring
   yajl-ruby
-
-BUNDLED WITH
-   1.12.5

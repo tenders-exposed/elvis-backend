@@ -9,7 +9,7 @@ development:
       # Provides the hosts the default client can connect to. Must be an array
       # of host:port pairs. (required)
       hosts:
-        - localhost:27017
+        - db:27017
       options:
         # Change the default write concern. (default = { w: 1 })
         # write:
@@ -130,7 +130,7 @@ test:
     default:
       database: elvis_test
       hosts:
-        - localhost:27017
+        - db:27017
       options:
         read:
           mode: :primary
@@ -141,7 +141,7 @@ staging:
     default:
       database: elvis_staging
       hosts:
-        - localhost:27017
+        - db:27017
       options:
         use_utc: true
         raise_not_found_error: false
@@ -151,7 +151,7 @@ production:
     default:
       database: elvis_production
       hosts:
-        - localhost:27017
+        - db:27017
       options:
         use_utc: true
         raise_not_found_error: false
