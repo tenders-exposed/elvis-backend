@@ -11,7 +11,7 @@ class Search::ActorDetails
       name: name,
       total_earnings: total_earnings,
       missing_values: missing_values,
-      median: median_tenderers,
+      median_tenderers: median_tenderers,
       contracts: contracts_list
     }
   end
@@ -28,11 +28,13 @@ class Search::ActorDetails
 
   def median_tenderers
     median = Search::Aggregation.new('number_of_tenderers', type: :percentiles)
-    response(median).deep_find('values')
+    median_values = response(median).deep_find('values')
+    median_50 = median_values['50.0']
+    return median_50 == 'NaN' ? nil : median_50
   end
 
   def contracts_list
-    wanted_fields = [ 'award.title', 'award_criteria', 'procuring_entity.name',
+    wanted_fields = ['id', 'award.title', 'award_criteria', 'procuring_entity.name',
       'procuring_entity.x_slug_id', 'award.value.x_amount_eur', 'number_of_tenderers',
       'suppliers.name', 'suppliers.x_slug_id']
     request = Search::ContractSearch.new(@query, nil, *wanted_fields)
