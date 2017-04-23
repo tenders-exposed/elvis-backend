@@ -9,14 +9,6 @@ module AvailableValues
       @available_values = Search::AggregationParser.new(response).parse_response
     end
 
-    def get_name_from_redis(collection)
-      store = Redis::HashKey.new(collection)
-      @available_values.each do |hash|
-         hash[:text] = store.get(hash[:key])
-         hash[:id] = hash.delete(:key)
-      end
-    end
-
   end
 
   class AvailableCountries < AvailableValuesBase
@@ -27,7 +19,11 @@ module AvailableValues
     end
 
     def with_name
-      get_name_from_redis('countries')
+      store = Redis::HashKey.new('countries')
+      @available_values.each do |hash|
+         hash[:text] = store.get(hash[:key])
+         hash[:id] = hash.delete(:key)
+      end
     end
 
   end
@@ -40,7 +36,18 @@ module AvailableValues
     end
 
     def with_name
-      cpvs = get_name_from_redis('cpvs')
+      store = Redis::HashKey.new('cpvs', marshal: true)
+      @available_values.each do |hash|
+        store_cpv = store.get(hash[:key])
+        if store_cpv
+          hash[:text] = store_cpv['text']
+          hash[:number_digits] = store_cpv['number_digits']
+        else
+          hash[:text] = nil
+          hash[:number_digits] = nil
+        end
+        hash[:id] = hash.delete(:key)
+      end
     end
 
   end
