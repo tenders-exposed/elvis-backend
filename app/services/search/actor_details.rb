@@ -34,9 +34,9 @@ class Search::ActorDetails
   end
 
   def contracts_list
-    wanted_fields = ['id', 'award.title', 'award_criteria', 'procuring_entity.name',
-      'procuring_entity.x_slug_id', 'award.value.x_amount_eur', 'number_of_tenderers',
-      'suppliers.name', 'suppliers.x_slug_id']
+    wanted_fields = ['id', 'award.title', 'award.value.x_amount_eur', 'award.date',
+      'award_criteria', 'procuring_entity.name', 'procuring_entity.x_slug_id',
+      'number_of_tenderers', 'suppliers.name', 'suppliers.x_slug_id']
     request = Search::ContractSearch.new(@query, nil, *wanted_fields)
     contracts = request.request.raw_response['hits']['hits'].map{|c| c['_source']}
   end
