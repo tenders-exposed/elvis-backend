@@ -1,6 +1,6 @@
 class Api::V1::NetworksController < Api::V1::ApiController
   include ContractsCsvExporter
-  before_action :authenticate_user!, only: [:create, :update, :index]
+  before_action :authenticate_user!, only: [:create, :update, :index, :destroy]
 
   def index
     @networks = current_user.networks
@@ -18,7 +18,7 @@ class Api::V1::NetworksController < Api::V1::ApiController
   def create
     @network = current_user.networks.build(query: query_params, options: graph_options )
     graph = graph_elements
-    write_graph_file(graph)
+    write_graph_file(graph, file_path)
     if @network.save!
       render json: @network,  status: 201
     else
@@ -30,11 +30,21 @@ class Api::V1::NetworksController < Api::V1::ApiController
     @network = current_user.networks.find(params[:id])
     if @network.update!(name: network_params[:name], description: network_params[:description],
        query: @network.query.merge(query_params), options: @network.options.merge(graph_options))
-      write_graph_file(network_params[:graph]) if network_params[:graph]
-      write_graph_file(graph_elements) unless query_params.empty? && graph_options.empty?
+      write_graph_file(network_params[:graph], file_path) if network_params[:graph]
+      write_graph_file(graph_elements, file_path) unless query_params.empty? && graph_options.empty?
       render json: @network, status: 200
     else
-      render json: {errors: @network.errors}, status: 422
+      render json: { errors: @network.errors }, status: 422
+    end
+  end
+
+  def destroy
+    @network = current_user.networks.find(params[:id])
+    if @network.destroy!
+      delete_graph_file(file_path)
+      head :no_content
+    else
+      render json: { errors: @network.errors }, status: 422
     end
   end
 
@@ -63,12 +73,19 @@ class Api::V1::NetworksController < Api::V1::ApiController
   end
 
   # TODO: Move this in a before_create
-  def write_graph_file(graph)
-    path = "#{Rails.root}/networks/#{@network.id}.bin"
-    File.delete(path) if File.exist?(path)
-    File.open(path, "wb") do |file|
+  def write_graph_file(graph, file_path)
+    delete_graph_file(file_path)
+    File.open(file_path, "wb") do |file|
       file << Marshal::dump(graph)
     end
+  end
+
+  def delete_graph_file(file_path)
+    File.delete(file_path) if File.exist?(file_path)
+  end
+
+  def file_path
+    "#{Rails.root}/networks/#{@network.id}.bin"
   end
 
   def file_name

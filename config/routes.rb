@@ -12,7 +12,7 @@ Rails.application.routes.draw do
       namespace :v1 do
 
         resources :users, only: [:show]
-        resources :networks, only: [:create, :index, :show, :update]
+        resources :networks, only: [:create, :index, :show, :update, :destroy]
         resources :cpvs, only: [:index]
 
         namespace :contracts do
