@@ -14,6 +14,7 @@ Rails.application.routes.draw do
         resources :users, only: [:show]
         resources :networks, only: [:create, :index, :show, :update, :destroy]
         resources :cpvs, only: [:index]
+        resources :performance_stats, only: [:create]
 
         namespace :contracts do
           post '/', to: 'contracts#index'
