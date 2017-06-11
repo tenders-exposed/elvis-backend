@@ -16,6 +16,9 @@ Rails.application.routes.draw do
         resources :cpvs, only: [:index]
         resources :performance_stats, only: [:create]
 
+        # Autocomplete supplier and procuring_entity names
+        get 'actor_autocomplete', to: 'autocomplete#actor_names'
+
         namespace :contracts do
           post '/', to: 'contracts#index'
           post 'count', to: 'contracts#count'
@@ -29,6 +32,7 @@ Rails.application.routes.draw do
           post 'years', to: 'years#index'
           # Get all cpvs in the contracts
           post 'cpvs', to: 'cpvs#index'
+          # Get contract by id
           get '/:id', to: 'contracts#show'
         end
       end
