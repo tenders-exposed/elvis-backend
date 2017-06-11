@@ -15,7 +15,6 @@ Rails.application.routes.draw do
         resources :networks, only: [:create, :index, :show, :update, :destroy]
         resources :cpvs, only: [:index]
         resources :performance_stats, only: [:create]
-
         # Autocomplete supplier and procuring_entity names
         get 'actor_autocomplete', to: 'autocomplete#actor_names'
 
