@@ -5,15 +5,15 @@ Elvis is a tool that enables investigative journalists to analyze and visualize 
 procurements data and look for patterns that suggest corrupt behavior in public spending.
 
 This is a Rails API, using MongoDB for storing and ElasticSearch for indexing/querying the data.
-It also has the purpose of filtering, analyzing and converting the results into a JSON the Vis.js 
+It also has the purpose of filtering, analyzing and converting the results into a JSON the Vis.js
 frontend can draw.
 
 #### Usage
 
-*NOTE*: The use of `Endpoint` in the following examples assumes the path is applied on the domain 
+*NOTE*: The use of `Endpoint` in the following examples assumes the path is applied on the domain
 `oz.tenders.exposed`.
 
-Authentication is still bound to frontend. Please use the [interface](http://elvis.tenders.exposed) 
+Authentication is still bound to frontend. Please use the [interface](http://elvis.tenders.exposed)
 to create an account and confirm it.
 
 Authorization:
@@ -70,7 +70,7 @@ Common use cases:
   }
   ```
 
-   You can provide as many of them as you like. For `suppliers` and `procuring_entities`, you have 
+   You can provide as many of them as you like. For `suppliers` and `procuring_entities`, you have
    to use their `slug_id` attribute. You can get it from the response by using other filters.
 
 *NOTE*: You can use the above `Payload` format for all `POST` requests under `api/v1/contracts`.
@@ -131,7 +131,7 @@ Common use cases:
   and `name` which is the
   name of the industry field corresponding to that CPV code.
 
-  Again, you can play around with parameters to find facts about industries 
+  Again, you can play around with parameters to find facts about industries
   or just leave it empty to get a list with all the CPVs of all the contracts in the database.
 
   The exact same rules apply for _years_ and _countries_, with their corresponding endpoints:
@@ -177,14 +177,14 @@ Common use cases:
   ```
 
   Let's break it down. `name` is the name of the company; `total_earnings` is the total
-  amount of money in EUR this company made in all the contracts from the database; 
+  amount of money in EUR this company made in all the contracts from the database;
   `missing_values` represents its number of contracts where the value is missing.
-  `median` is the [median](https://www.mathsisfun.com/median.html) of the number of tenderers 
+  `median` is the [median](https://www.mathsisfun.com/median.html) of the number of tenderers
   in all the contracts this supplier was involved. If you want to restrict the extent
   of these aggregations to contracts from a certain year etc., you can
   use their corresponding filters.
 
-  The same rules apply for procuring entities details, using the endpoint 
+  The same rules apply for procuring entities details, using the endpoint
   `POST api/v1/contracts/procuring_entities_details`.
 
 ### Autocomplete for suppliers or procuring entities names
@@ -193,11 +193,11 @@ To retrieve autocomplete suggestions for a given string you have to:
 
 `GET api/v1/actor_autocomplete`
 
-Parameters: 
+Parameters:
 *  `text` - the string to autocomplete. _The string to be longer than 1 character_ (>=2)
 *  `max_suggestions` - optional integer maximum number of suggestions - default 10
 
-Example: 
+Example:
 
 `localhost:3000/api/v1/actor_autocomplete?text=hav&max_suggestions=100`
 
@@ -210,11 +210,11 @@ Returns:
     "results": [
       {
         "name": "HAVANA BLUE B.V.",
-        "x_slug_id": 140
+        "x_slug_id": "441869"
       },
       {
         "name": "HAVERKAMP&BERGERS PROJECT COMMUNICATIE, KANDIDAAT A. BERGERS",
-        "x_slug_id": 346
+        "x_slug_id": "441870"
       }
     ]
   }
