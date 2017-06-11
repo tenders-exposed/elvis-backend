@@ -187,3 +187,36 @@ Common use cases:
   The same rules apply for procuring entities details, using the endpoint 
   `POST api/v1/contracts/procuring_entities_details`.
 
+### Autocomplete for suppliers or procuring entities names
+
+To retrieve autocomplete suggestions for a given string you have to:
+
+`GET api/v1/actor_autocomplete`
+
+Parameters: 
+*  `text` - the string to autocomplete. _The string to be longer than 1 character_ (>=2)
+*  `max_suggestions` - optional integer maximum number of suggestions - default 10
+
+Example: 
+
+`localhost:3000/api/v1/actor_autocomplete?text=hav&max_suggestions=100`
+
+Returns:
+
+```json
+{
+  "search": {
+    "count": 2,
+    "results": [
+      {
+        "name": "HAVANA BLUE B.V.",
+        "x_slug_id": 140
+      },
+      {
+        "name": "HAVERKAMP&BERGERS PROJECT COMMUNICATIE, KANDIDAAT A. BERGERS",
+        "x_slug_id": 346
+      }
+    ]
+  }
+}
+```
