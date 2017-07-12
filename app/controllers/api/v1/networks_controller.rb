@@ -49,9 +49,14 @@ class Api::V1::NetworksController < Api::V1::ApiController
   end
 
   def network_params
-    params.require(:network).permit(:id, :name, :description, options: [:nodes, :edges],
+    params.require(:network).permit(:id, :name, :description,options: [:nodes, :edges],
       query: [countries: [], cpvs:[], years: [], procuring_entities: [], suppliers: []],
-      graph: [ nodes: [], edges: []] )
+      graph: [
+        nodes: [:id, :value, :label, :type, :color, flags: [:median]],
+        edges: [:from, :to, :value, flags: [:percent_contracts, :x_same_city]],
+        clusters: [:id, :name, :type, node_ids: []]
+      ]
+    )
   end
 
   private
