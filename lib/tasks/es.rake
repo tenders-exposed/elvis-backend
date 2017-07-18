@@ -1,7 +1,15 @@
 namespace :es do
-  task :update_indices => ['es:require'] do
-    Mongoid::Elasticsearch.registered_models.each do |model_name|
+  task :update_indices => ['es:require'] do |task, args|
+    registered_models = Mongoid::Elasticsearch.registered_models
+    models_to_index = args.extras
+    unless models_to_index.empty?
+      indices = registered_models & models_to_index
+      p 'The models you passed are not registered indices' if indices.empty?
+    else
+      models_to_index = registered_models
+    end
 
+    models_to_index.each do |model_name|
       # Create the index if it doesn't exist
       model = model_name.constantize
       es_indices = model.es.client.indices
