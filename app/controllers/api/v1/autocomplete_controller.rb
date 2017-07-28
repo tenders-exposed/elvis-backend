@@ -2,21 +2,10 @@ class Api::V1::AutocompleteController < Api::V1::ApiController
   include SearchResponseFormatter
 
   def actor_names
-    results = Supplier.es.client.suggest(
-      index: 'autocomplete',
-      body: {
-        suggestions: {
-          text: curated_params[:text],
-          completion: {
-            field: 'suggest',
-            size: curated_params[:max_suggestions]
-          }
-        }
-      }
-    )
-    suggestions = results.fetch('suggestions', [])[0].fetch('options', [])
-    render json: search_json_response(count: suggestions.size,
-     results: suggestions.map{|res| res['payload']}), status: 200
+    request = Search::AutocompleteSearch.new(curated_params[:text],
+      curated_params[:max_suggestions])
+    render json: search_json_response(count: request.count,
+      results: request.search), status: 200
    rescue => e
      render_error(e.message)
   end
