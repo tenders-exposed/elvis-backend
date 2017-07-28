@@ -11,7 +11,9 @@ class Contract
   embeds_many :suppliers, inverse_of: :contract
 
   # Indexes
-  index({ "procuring_entity.x_slug": "hashed" }, {name: "procurer_xslug_index" })
+  index({ "procuring_entity.x_slug": "hashed" }, { name: "procurer_xslug_index" })
+  index({ "suppliers.x_slug_id": 1 }, { name: "suppliers_xslugid_index" })
+  index({ "procuring_entity.x_slug_id": 1 }, { name: "procurer_xslugid_index" })
 
   # Fields
   field :contract_id, type: String
