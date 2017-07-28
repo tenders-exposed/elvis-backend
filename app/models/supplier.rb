@@ -16,7 +16,7 @@ class Supplier
   end
 
   def as_indexed_json
-    obj = self.as_json[self.model_name.element].except(:x_slug)
+    obj = self.as_json.except(:x_slug)
     obj[:type] = self.model_name.element
     obj
   end
