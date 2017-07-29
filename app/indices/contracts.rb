@@ -1,3 +1,5 @@
+require "#{Rails.root}/app/indices/base.rb"
+
 module Indices
   class Contracts < Base
 
