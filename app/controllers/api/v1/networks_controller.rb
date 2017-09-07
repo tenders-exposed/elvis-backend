@@ -16,7 +16,7 @@ class Api::V1::NetworksController < Api::V1::ApiController
   end
 
   def create
-    @network = current_user.networks.build(query: query_params, options: graph_options )
+    @network = current_user.networks.build(network_params.except(:graph))
     graph = graph_elements
     write_graph_file(graph, file_path)
     if @network.save!
@@ -28,10 +28,12 @@ class Api::V1::NetworksController < Api::V1::ApiController
 
   def update
     @network = current_user.networks.find(params[:id])
-    if @network.update!(name: network_params[:name], description: network_params[:description],
-       query: @network.query.merge(query_params), options: @network.options.merge(graph_options))
-      write_graph_file(network_params[:graph], file_path) if network_params[:graph]
-      write_graph_file(graph_elements, file_path) unless query_params.empty? && graph_options.empty?
+    update_params = network_params
+    update_params[:options] = @network.options.clone.merge(network_params.fetch(:options, {}))
+    update_params[:query] = @network.query.clone.merge(network_params.fetch(:query, {}))
+    if @network.update!(update_params.except(:graph))
+      write_graph_file(graph.merge(network_params[:graph]), file_path) if network_params[:graph]
+      write_graph_file(graph_elements, file_path) if network_params[:query] || network_params[:options]
       render json: @network, status: 200
     else
       render json: { errors: @network.errors }, status: 422
@@ -61,20 +63,16 @@ class Api::V1::NetworksController < Api::V1::ApiController
 
   private
 
-  def query_params
-    network_params.fetch(:query, {})
-  end
-
-  def graph_options
-    network_params.fetch(:options, {})
-  end
-
   def query
     Search::Query.new(@network.query.symbolize_keys)
   end
 
   def graph_elements
     Vis::Generator.new(query,@network.options.symbolize_keys).generate_graph_elements
+  end
+
+  def graph
+    Marshal::load( File.open(file_path, "rb"){|f| f.read} )
   end
 
   # TODO: Move this in a before_create
