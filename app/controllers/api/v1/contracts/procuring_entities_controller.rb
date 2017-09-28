@@ -20,8 +20,8 @@ class Api::V1::Contracts::ProcuringEntitiesController < Api::V1::ApiController
   def get_procuring_entity_details
     details = []
     query.fetch(:procuring_entities, []).each do |x_slug_id|
-      query_object = Search::Query.new(query.except(:procuring_entities),
-       procuring_entities: [x_slug_id] )
+      procurer_query = query.except(:procuring_entities).merge(procuring_entities: [x_slug_id])
+      query_object = Search::Query.new(procurer_query)
       details << Search::ActorDetails.new(query_object, x_slug_id, "procuring_entity").details
     end
     details

@@ -20,7 +20,7 @@ class Api::V1::Contracts::SuppliersController < Api::V1::ApiController
   def get_supplier_details
     details = []
      query.fetch(:suppliers, []).each do |x_slug_id|
-      query_object = Search::Query.new(query.except(:suppliers), suppliers: [x_slug_id])
+      query_object = Search::Query.new(query.except(:suppliers).merge(suppliers: [x_slug_id]))
       details << Search::ActorDetails.new(query_object, x_slug_id, "suppliers").details
     end
     details
