@@ -10,7 +10,8 @@ class Api::V1::Contracts::ProcuringEntitiesController < Api::V1::ApiController
   end
 
   def procuring_entities_params
-    params.permit(query: [countries: [], cpvs:[], years: [], procuring_entities: []])
+    params.permit(query: [countries: [], cpvs:[], years: [], procuring_entities: [],
+                  suppliers: []])
   end
 
   def query
