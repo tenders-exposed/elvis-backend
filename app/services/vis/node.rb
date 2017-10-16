@@ -10,7 +10,7 @@ class Vis::Node
     @label = label
     @type = type
     @color = COLORS[@type.to_sym]
-    @flags = flags.slice(:median)
+    @flags = flags.slice(:average_competition)
   end
 
 end
