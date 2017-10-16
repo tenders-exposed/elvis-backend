@@ -44,19 +44,19 @@ class Vis::Generator
 
   def compute_suppliers(field, chained = nil)
     chained_agg = chained ? {chained_agg: chained} : {}
-    median = Search::Aggregation.new('number_of_tenderers',
+    avrg_competition = Search::Aggregation.new('number_of_tenderers',
      {type: :percentiles}.merge(chained_agg))
     values_supplier = Search::Aggregation.new('suppliers.x_slug_id',
-     embedded_agg: median)
+     embedded_agg: avrg_competition)
     results = get_results(values_supplier)
     names = get_names("suppliers")
     results.each_with_index do |a, i|
       a.merge!(names[i])
     end
     results.map! do |res|
-      median = res[:values][:"50.0"].to_f
+      avrg_competition = res[:values][:"50.0"].to_f
       Vis::Node.new(res[:key], res[:name], res[field.to_sym].round(2),
-       'supplier', node_red_flags(median))
+       'supplier', node_red_flags(avrg_competition))
     end
     @nodes.push(*results)
   end
@@ -120,9 +120,9 @@ class Vis::Generator
     end
   end
 
-  def node_red_flags(median)
+  def node_red_flags(avrg_competition)
     hash = {}
-    hash[:median] = median if median == 1
+    hash[:average_competition] = avrg_competition if avrg_competition == 1
     hash
   end
 
