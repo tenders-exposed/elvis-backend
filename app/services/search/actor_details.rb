@@ -11,7 +11,7 @@ class Search::ActorDetails
       name: name,
       total_earnings: total_earnings,
       missing_values: missing_values,
-      median_tenderers: median_tenderers,
+      average_competition: median_number_tenderers,
       contracts: contracts_list
     }
   end
@@ -26,7 +26,7 @@ class Search::ActorDetails
     response(missing).deep_find('doc_count').round(2)
   end
 
-  def median_tenderers
+  def median_number_tenderers
     median = Search::Aggregation.new('number_of_tenderers', type: :percentiles)
     median_values = response(median).deep_find('values')
     median_50 = median_values['50.0']
