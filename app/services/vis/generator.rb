@@ -61,16 +61,22 @@ class Vis::Generator
     @nodes.push(*results)
   end
 
-  def compute_procurers(field, embedded = nil)
-    values_entity = Search::Aggregation.new("procuring_entity.x_slug_id",
-     (embedded ? {embedded_agg: embedded} : {}))
-    results = get_results(values_entity)
+  def compute_procurers(field, chained = nil)
+    chained_agg = chained ? {chained_agg: chained} : {}
+    avrg_competition = Search::Aggregation.new('number_of_tenderers',
+     {type: :percentiles}.merge(chained_agg))
+    values_procurer = Search::Aggregation.new('procuring_entity.x_slug_id',
+     embedded_agg: avrg_competition)
+    results = get_results(values_procurer)
     names = get_names("procuring_entity")
     results.each_with_index do |a, i|
       a.merge!(names[i])
     end
-    results.map!{ |res| Vis::Node.new(res[:key], res[:name],
-     res[field.to_sym], 'procuring_entity') }
+    results.map! do |res|
+      avrg_competition = res[:values][:"50.0"].to_f
+      Vis::Node.new(res[:key], res[:name], res[field.to_sym].round(2),
+       'procuring_entity', node_red_flags(avrg_competition))
+    end
     @nodes.push(*results)
   end
 
