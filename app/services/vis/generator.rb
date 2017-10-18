@@ -56,7 +56,7 @@ class Vis::Generator
     results.map! do |res|
       avrg_competition = res[:values][:"50.0"].to_f
       Vis::Node.new(res[:key], res[:name], res[field.to_sym].round(2),
-       'supplier', node_red_flags(avrg_competition))
+       'supplier', avrg_competition, node_red_flags(avrg_competition))
     end
     @nodes.push(*results)
   end
@@ -75,7 +75,7 @@ class Vis::Generator
     results.map! do |res|
       avrg_competition = res[:values][:"50.0"].to_f
       Vis::Node.new(res[:key], res[:name], res[field.to_sym].round(2),
-       'procuring_entity', node_red_flags(avrg_competition))
+       'procuring_entity', avrg_competition, node_red_flags(avrg_competition))
     end
     @nodes.push(*results)
   end
